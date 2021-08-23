@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Chart from 'react-google-charts';
 
-import { summaryOrder } from '../actions/orderActions';
+import { summaryOrder } from '../../../actions/orderActions';
 import Loading from '../../Loading';
 import Message from '../../Message';
 

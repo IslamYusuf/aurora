@@ -106,10 +106,7 @@ export const orderDeliverReducer = (state = {}, action) => {
     }
 };
 
-export const orderSummaryReducer = (
-    state = { loading: true, summary: {} },
-    action
-  ) => {
+export const orderSummary = (state = { loading: true, summary: {} },action) => {
     switch (action.type) {
       case ORDER_SUMMARY_REQUEST:
         return { loading: true };

@@ -2,10 +2,11 @@ import {Route, BrowserRouter} from 'react-router-dom';
 import {Provider} from 'react-redux';
 
 import store from './store';
-import {ProductDetails,Cart, Order, OrderHistory, PaymentMethod,
-        PlaceOrder,ShippingAddress, SigninTest, Signin, Signup,
-        UserProfile, PrivateRoute, Products, Navbar,UserEdit,AdminRoute,
-        OrderList, ProductList, ProductEdit
+import {
+    ProductDetails,Cart, Order, OrderHistory, PaymentMethod,
+    PlaceOrder,ShippingAddress, SigninTest, Signin, Signup,
+    UserProfile, PrivateRoute, Products, Navbar,UserEdit,AdminRoute,
+    OrderList, ProductList, ProductEdit, Dashboard
 } from './components'
 import UserList from './components/User/UserList';
 
@@ -32,6 +33,7 @@ const App = () => {
                         <AdminRoute exact path="/orderlist"component={OrderList}/>
                         <Route exact path="/product/:id/edit" component={ProductEdit}/>
                         <AdminRoute exact path="/productlist" component={ProductList}/>
+                        <AdminRoute exact path="/dashboard" component={Dashboard}/>
                     </main>
                     <footer className="row center">
                         All right reserved
