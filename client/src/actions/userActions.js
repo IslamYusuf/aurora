@@ -1,5 +1,5 @@
 import Axios from 'axios';
-import { CART_LOAD_ITEMS, CART_SAVE_ITEMS, CART_REMOVE_SHIPPING_ADDRESS } from '../constants/cartConstants';
+import { CART_LOAD_ITEMS, CART_SAVE_ITEMS, CART_REMOVE_SHIPPING_ADDRESS, CART_ADD_ITEM } from '../constants/cartConstants';
 import {
     USER_DETAILS_FAIL,USER_DETAILS_REQUEST,USER_DETAILS_SUCCESS,
     USER_SIGNIN_FAIL,USER_SIGNIN_REQUEST,USER_SIGNIN_SUCCESS,
@@ -10,21 +10,17 @@ import {
     USER_UPDATE_SUCCESS,USER_UPDATE_FAIL
 } from '../constants/userConstants';
 
-export const signin = (email, password) => async (dispatch) =>{
+export const signin = (email, password) => async (dispatch, getState) =>{
     dispatch({type: USER_SIGNIN_REQUEST, payload: {email, password}});
-
     try {
         const {data} = await Axios.post('/api/users/signin', {email, password});
         const savedCartItems = data.cartItems;
-        const existingCartItems = localStorage.getItem('cartItems')
-            ? JSON.parse(localStorage.getItem('cartItems'))
-            : []
-        const cartItems = [...savedCartItems,...existingCartItems];
         dispatch({type: USER_SIGNIN_SUCCESS, payload: data});
-        dispatch({type: CART_LOAD_ITEMS, payload: cartItems});
         localStorage.setItem('userInfo', JSON.stringify(data));
-        localStorage.setItem('cartItems',JSON.stringify(cartItems)); 
-
+        
+        if(savedCartItems) for(let i=0; i < savedCartItems.length; ++i) dispatch({type:CART_ADD_ITEM, payload:savedCartItems[i]});
+        const {cart:{cartItems}} = getState();
+        localStorage.setItem('cartItems',JSON.stringify(cartItems));
     } catch (e) {
         dispatch({type: USER_SIGNIN_FAIL,
             payload: e.response && e.response.data.message
