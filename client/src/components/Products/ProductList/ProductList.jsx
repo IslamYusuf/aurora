@@ -1,16 +1,16 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import {useHistory} from 'react-router-dom';
 //import { Link, useParams } from 'react-router-dom';
+
 
 import {createProduct,deleteProduct,getProducts,} from '../../../actions/productActions';
 import Loading from '../../Loading';
 import Message from '../../Message';
 import {PRODUCT_CREATE_RESET,PRODUCT_DELETE_RESET,} from '../../../constants/productConstants';
 
-const ProductList = (props) => {
-    //const { pageNumber = 1 } = useParams();
-
-    //const sellerMode = props.match.path.indexOf('/seller') >= 0;
+const ProductList = () => {
+    const history = useHistory();
     const { loading, error, products,} = useSelector((state) => state.products);
 
     const productCreate = useSelector((state) => state.productCreate);
@@ -32,13 +32,13 @@ const ProductList = (props) => {
     useEffect(() => {
         if (successCreate) {
             dispatch({ type: PRODUCT_CREATE_RESET });
-            props.history.push(`/product/${createdProduct._id}/edit`);
+            history.push(`/product/${createdProduct._id}/edit`);
         }
         if (successDelete) {
             dispatch({ type: PRODUCT_DELETE_RESET });
         }
         dispatch(getProducts());
-    }, [createdProduct,dispatch,props.history,successCreate,successDelete,userInfo._id,]);
+    }, [createdProduct,dispatch,history,successCreate,successDelete,userInfo._id,]);
 
     const deleteHandler = (product) => {
         if (window.confirm('Are you sure you want to delete?')) {
@@ -89,7 +89,7 @@ const ProductList = (props) => {
                                 type="button"
                                 className="small"
                                 onClick={() =>
-                                    props.history.push(`/product/${product._id}/edit`)
+                                    history.push(`/product/${product._id}/edit`)
                                 }
                                 >
                                 Edit

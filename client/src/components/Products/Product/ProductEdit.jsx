@@ -1,13 +1,19 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Axios from 'axios';
+import {
+    Avatar, Button, CssBaseline, TextField, 
+    Grid, Box, Typography, Container,
+} from '@material-ui/core';
 
 import { getProduct, updateProduct } from '../../../actions/productActions';
 import Loading from '../../Loading';
 import Message from '../../Message';
 import { PRODUCT_UPDATE_RESET } from '../../../constants/productConstants';
+import useStyles from './styles';
 
 const ProductEdit = (props) => {
+    const classes = useStyles();
     const productId = props.match.params.id;
     const [name, setName] = useState('');
     const [price, setPrice] = useState('');
@@ -82,110 +88,94 @@ const ProductEdit = (props) => {
     };
 
     return (
-        <div>
-            <form className="form" onSubmit={submitHandler}>
-                <div>
-                    <h1>Edit Product {productId}</h1>
-                </div>
-                {loadingUpdate && <Loading></Loading>}
-                {errorUpdate && <Message variant="danger">{errorUpdate}</Message>}
-                {loading ? (<Loading></Loading>)
-                : error ? (<Message variant="danger">{error}</Message>) : (
-                <>
-                    <div>
-                        <label htmlFor="name">Name</label>
-                        <input
-                            id="name"
-                            type="text"
-                            placeholder="Enter name"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                        ></input>
-                    </div>
-                    <div>
-                        <label htmlFor="price">Price</label>
-                        <input
-                            id="price"
-                            type="text"
-                            placeholder="Enter price"
-                            value={price}
-                            onChange={(e) => setPrice(e.target.value)}
-                        ></input>
-                    </div>
-                    <div>
-                        <label htmlFor="image">Image</label>
-                        <input
-                            id="image"
-                            type="text"
-                            placeholder="Enter image"
-                            value={image}
-                            onChange={(e) => setImage(e.target.value)}
-                        ></input>
-                    </div>
-                    <div>
-                        <label htmlFor="imageFile">Image File</label>
-                        <input
-                            type="file"
-                            id="imageFile"
-                            label="Choose Image"
-                            onChange={uploadFileHandler}
-                        ></input>
-                        {loadingUpload && <Loading></Loading>}
-                        {errorUpload && (
-                            <Message variant="danger">{errorUpload}</Message>
-                        )}
-                    </div>
-                    <div>
-                        <label htmlFor="category">Category</label>
-                        <input
-                            id="category"
-                            type="text"
-                            placeholder="Enter category"
-                            value={category}
-                            onChange={(e) => setCategory(e.target.value)}
-                        ></input>
-                    </div>
-                    <div>
-                        <label htmlFor="brand">Brand</label>
-                        <input
-                            id="brand"
-                            type="text"
-                            placeholder="Enter brand"
-                            value={brand}
-                            onChange={(e) => setBrand(e.target.value)}
-                        ></input>
-                    </div>
-                    <div>
-                        <label htmlFor="countInStock">Count In Stock</label>
-                        <input
-                            id="countInStock"
-                            type="text"
-                            placeholder="Enter countInStock"
-                            value={countInStock}
-                            onChange={(e) => setCountInStock(e.target.value)}
-                        ></input>
-                    </div>
-                    <div>
-                        <label htmlFor="description">Description</label>
-                        <textarea
-                            id="description"
-                            rows="3"
-                            type="text"
-                            placeholder="Enter description"
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                        ></textarea>
-                    </div>
-                    <div>
-                        <label></label>
-                        <button className="primary" type="submit">
-                            Update
-                        </button>
-                    </div>
-                </>
-                )}
-            </form>            
-        </div>
+            <Container component="main" maxWidth="xs">
+            <CssBaseline />
+            <div className={classes.paper}>
+                <form className={classes.form} onSubmit={submitHandler}>
+                    <Typography component='h1' variant='h5'>
+                        Product Edit {productId}
+                    </Typography>
+                    {loadingUpdate && <Loading></Loading>}
+                    {errorUpdate && <Message variant="danger">{errorUpdate}</Message>}
+                    {loading ? (<Loading></Loading>)
+                    : error ? (<Message variant="danger">{error}</Message>) : (
+                        <>
+                            <Grid container spacing={2}>
+                                <Grid item xs={12} sm={6}>
+                                    <TextField 
+                                    variant="outlined" margin="normal" required fullWidth id="name"
+                                    label="Name" name="name" autoFocus
+                                    onChange={(e) => setName(e.target.value)} value={name}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <TextField
+                                    variant="outlined" margin="normal" required fullWidth name="category"
+                                    label="Category" id="category" value={category}
+                                    onChange={(e) => setCategory(e.target.value)}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <TextField
+                                    variant="outlined" margin="normal" required fullWidth name="brand"
+                                    label="Brand" id="brand" value={brand}
+                                    onChange={(e) => setBrand(e.target.value)}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <TextField
+                                    variant="outlined" margin="normal" required fullWidth
+                                    name="price" label="Price" id="price" value={price}
+                                    onChange={(e) => setPrice(e.target.value)}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <TextField
+                                    variant="outlined" margin="normal" required fullWidth name="countInStock"
+                                    label="Count In Stock" id="countInStock" value={countInStock}
+                                    onChange={(e) => setCountInStock(e.target.value)}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <TextField
+                                    variant="outlined" margin="normal" required fullWidth maxRows='3'
+                                    type='text' name="description" label="Enter description..." 
+                                    id="description" value={description}
+                                    onChange={(e) => setDescription(e.target.value)}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <TextField
+                                    variant="outlined" margin="normal" required fullWidth
+                                    name="image" label="Image" id="image" value={image}
+                                    onChange={(e) => setImage(e.target.value)} disabled
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <TextField
+                                    variant="outlined" margin="normal" required fullWidth
+                                    type="file" id="imageFile"
+                                    onChange={uploadFileHandler}
+                                    />
+                                </Grid>
+                                <Grid item lg={12}>
+                                    {loadingUpload && <Loading></Loading>}
+                                    {errorUpload && (
+                                        <Message variant="danger">{errorUpload}</Message>
+                                    )}
+                                </Grid>
+                                
+                                
+                            </Grid>
+                            <Button
+                                type="submit" fullWidth variant="contained"
+                                color="primary" className={classes.submit}
+                            >Update</Button>
+                        </>
+                    )}
+                </form>
+            </div>
+        </Container>
     );
 }
 

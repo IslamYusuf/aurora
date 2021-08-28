@@ -1,6 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import path from 'path';
 
 import productRouter from './routers/productRouter.js';
 import userRouter from './routers/userRouter.js';
@@ -28,6 +29,9 @@ app.use('/api/uploads', uploadRouter);
 app.get('/', (req, res) =>{
     res.send('Server is running')
 })
+
+const __dirname = path.resolve();
+app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
 app.use((err, req, res, next) =>{
     res.status(500).send({message: err.message});

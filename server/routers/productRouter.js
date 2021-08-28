@@ -70,21 +70,21 @@ productRouter.put(
 
 //Adding a product goes below
 productRouter.post('/', isAuth, isAdmin,
-    expressAsyncHandler(async (req, res) =>{
-      const product = new Product({
-        name: req.body.name || 'name',
-        image: req.body.image || '/image/image.jpg' ,
-        brand: req.body.brand || 'brand',
-        category: req.body.category || 'category',
-        description: req.body.description || 'description',
-        price: req.body.price || 0,
-        countInStock: req.body.countInStock || 0,
-        rating: req.body.rating || 0,
-        numReviews: req.body.numReviews || 0,
-      })
-      const createdProduct = await product.save(product);
-      res.send({message:'Product created',product: createdProduct});
-    })
+  expressAsyncHandler(async (req, res) => {
+    const product = new Product({
+      name: 'sample name ' + Date.now(),
+      image: '/images/p1.jpg',
+      price: 0,
+      category: 'sample category',
+      brand: 'sample brand',
+      countInStock: 0,
+      rating: 0,
+      numReviews: 0,
+      description: 'sample description',
+    });
+    const createdProduct = await product.save();
+    res.send({ message: 'Product Created', product: createdProduct });
+  })
 );
 
 export default productRouter;

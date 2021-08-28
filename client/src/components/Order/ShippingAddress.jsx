@@ -1,11 +1,18 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
+import {
+    Button, CssBaseline, TextField,
+    Typography, Container,Divider,
+    FormControl, FormLabel,RadioGroup,FormControlLabel,Radio,
+} from '@material-ui/core';
 
-import { saveShippingAddress } from "../../actions/cartActions";
-import CheckoutSteps from "../Cart/CheckoutSteps"
+import { saveShippingAddress, savePaymentMethod } from "../../actions/cartActions";
+import CheckoutSteps from "../Cart/CheckoutSteps";
+import useStyles from './styles';
 
 const ShippingAddress = () => {
+    const classes = useStyles();
     const history = useHistory();
     const {userInfo} = useSelector(state => state.user);
     
@@ -13,6 +20,7 @@ const ShippingAddress = () => {
         history.push('/signin');
     }
     
+    const [paymentMethod, setPaymentMethod] = useState('stripe');
     const {shippingAddress} = useSelector(state => state.cart)
     const [fullName, setFullName] = useState(shippingAddress.fullName || '');
     const [address, setAddress] = useState(shippingAddress.address || '');
@@ -25,68 +33,91 @@ const ShippingAddress = () => {
     const submitHandler = (e) =>{
         e.preventDefault();
         dispatch(saveShippingAddress({fullName, address, city, postalCode, country}));
-        history.push('/payment');
+        dispatch(savePaymentMethod(paymentMethod));
+        history.push('/placeorder')
     };
     return (
-        <div>
-            <CheckoutSteps step1 step2></CheckoutSteps>
-            <form className='form' onSubmit={submitHandler}>
-                <div>
-                    <h1>Shipping Address</h1>
+        <>
+            <CheckoutSteps step1 step2/>
+            <Container component='main' maxWidth='xs'>
+                <CssBaseline/>
+                <div className={classes.paper}>
+                    <Typography component="h1" variant="h5">
+                        Shipping and Payment Information
+                    </Typography>
+                    <form className={classes.form} onSubmit={submitHandler}>
+                        <TextField
+                            variant="outlined"
+                            margin="normal"
+                            required
+                            fullWidth
+                            id="fullname"
+                            label="Full Name"
+                            name="fullname"
+                            autoFocus
+                            onChange={(e) => setFullName(e.target.value)}
+                        />
+                        <TextField
+                            variant="outlined"
+                            margin="normal"
+                            required
+                            fullWidth
+                            name="address"
+                            label="Address"
+                            id="address"
+                            onChange={(e) => setAddress(e.target.value)}
+                        />
+                        <TextField
+                            variant="outlined"
+                            margin="normal"
+                            required
+                            fullWidth
+                            name="city"
+                            label="City"
+                            id="city"
+                            onChange={(e) => setCity(e.target.value)}
+                        />
+                        <TextField
+                            variant="outlined"
+                            margin="normal"
+                            required
+                            fullWidth
+                            name="postalCode"
+                            label="Postal Code"
+                            id="postalCode"
+                            onChange={(e) => setPostalCode(e.target.value)}
+                        />
+                        <TextField
+                            variant="outlined"
+                            margin="normal"
+                            required
+                            fullWidth
+                            name="country"
+                            label="Country"
+                            id="country"
+                            onChange={(e) => setCountry(e.target.value)}
+                        />
+                        <Divider/>
+                        <FormControl component="fieldset">
+                            <FormLabel component="legend">Payment Method</FormLabel>
+                            <RadioGroup aria-label="payment" name="payment" value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)}>
+                                <FormControlLabel value="stripe" control={<Radio />} label="Stripe" />
+                                <FormControlLabel value="paypal" control={<Radio />} label="Paypal" />
+                            </RadioGroup>
+                        </FormControl>
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            color="primary"
+                            className={classes.submit}
+                        >
+                            Place Order
+                        </Button>
+                    </form>
                 </div>
-                <div>
-                    <label htmlFor='fullName'>Full Name</label>
-                    <input 
-                    type='text'
-                    id='fullName'
-                    placeholder='Enter full name'
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    required />
-                </div>
-                <div>
-                    <label htmlFor='address'>Address</label>
-                    <input 
-                    type='text'
-                    id='address'
-                    placeholder='Enter Address'
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
-                    required />
-                </div><div>
-                    <label htmlFor='city'>City</label>
-                    <input 
-                    type='text'
-                    id='city'
-                    placeholder='Enter city'
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                    required />
-                </div><div>
-                    <label htmlFor='postalCode'>Postal Code</label>
-                    <input 
-                    type='text'
-                    id='postalCode'
-                    placeholder='Enter postal code'
-                    value={postalCode}
-                    onChange={(e) => setPostalCode(e.target.value)}
-                    required />
-                </div><div>
-                    <label htmlFor='country'>Country</label>
-                    <input 
-                    type='text'
-                    id='country'
-                    placeholder='Enter country'
-                    value={country}
-                    onChange={(e) => setCountry(e.target.value)}
-                    required />
-                </div>
-                <div>
-                    <label/>
-                    <button className='primary' type='submit'>Next</button>
-                </div>
-            </form>          
-        </div>
+            </Container>
+        </>
     )
 }
 

@@ -28,11 +28,11 @@ export const signin = (email, password) => async (dispatch, getState) =>{
             : e.message})
     }
 }
-export const signup = (name, email, password) => async (dispatch) =>{
+export const signup = (firstName, lastName, email, password) => async (dispatch) =>{
     dispatch({type: USER_SIGNUP_REQUEST, payload: {email, password}});
 
     try {
-        const {data} = await Axios.post('/api/users/signup', {name, email, password});
+        const {data} = await Axios.post('/api/users/signup', {firstName, lastName, email, password});
         dispatch({type: USER_SIGNUP_SUCCESS, payload: data});
         dispatch({type: USER_SIGNIN_SUCCESS, payload: data});
         localStorage.setItem('userInfo', JSON.stringify(data));
@@ -96,9 +96,7 @@ export const updateUserProfile = (user) => async (dispatch, getState) => {
 
 export const updateUser = (user) => async (dispatch, getState) => {
   dispatch({ type: USER_UPDATE_PROFILE_REQUEST, payload: user });
-  const {
-    user: { userInfo },
-  } = getState();
+  const {user: { userInfo },} = getState();
   try {
     const { data } = await Axios.put(`/api/users/${user._id}`, user, {
       headers: { Authorization: `Bearer ${userInfo.token}` },

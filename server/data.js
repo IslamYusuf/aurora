@@ -1,21 +1,24 @@
 import bcrypt from 'bcryptjs';
 const data = {
     users: [{
-        name: 'Islam',
+        firstName: 'Islam',
+        lastName: 'Yusuf',
         email: 'admin@example.com',
         password: bcrypt.hashSync('1234', 8),
         isAdmin: true,
         cartItems: {}
     },
     {
-        name: 'John',
+        firstName: 'John',
+        lastName: 'Doe',
         email: 'user@example.com',
         password: bcrypt.hashSync('1234', 8),
         isAdmin: false,
         cartItmes: {}
     },
     {
-        name: 'Jane',
+        firstName: 'Jane',
+        lastName: 'Doe',
         email: 'jane@example.com',
         password: bcrypt.hashSync('1234', 8),
         isAdmin: false,
@@ -24,7 +27,7 @@ const data = {
     products:[
         {
             name: "Blouse",
-            category:"Shirts",
+            category:"Blouse",
             image: "/images/p1.jpg",
             price: 100,
             countInStock: 10,
@@ -35,7 +38,7 @@ const data = {
         },
         {
             name: "Dress",
-            category:"Shirts",
+            category:"Dress",
             image: "/images/p1.jpg",
             price: 107,
             countInStock: 20,
@@ -46,7 +49,7 @@ const data = {
         },
         {
             name: "Trouser",
-            category:"Shirts",
+            category:"Trouser",
             image: "/images/p1.jpg",
             price: 100,
             countInStock: 0,
@@ -68,7 +71,7 @@ const data = {
         },
         {
             name: "Sweat pant",
-            category:"Shirts",
+            category:"Sweat Pant",
             image: "/images/p1.jpg",
             price: 200,
             countInStock: 12,
@@ -79,7 +82,7 @@ const data = {
         },
         {
             name: "Pants",
-            category:"Shirts",
+            category:"Pants",
             image: "/images/p1.jpg",
             price: 100,
             countInStock: 10,

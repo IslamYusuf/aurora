@@ -38,7 +38,7 @@ export const userDetails = (state={loading: true}, action) =>{
         case USER_DETAILS_FAIL:
             return {loading: false, error: action.payload};
         case USER_DETAILS_RESET:
-            return {loading: true,};
+            return {loading: true};
         default:
             return state;
     }

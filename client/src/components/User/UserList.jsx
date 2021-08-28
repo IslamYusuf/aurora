@@ -9,7 +9,6 @@ import { USER_DETAILS_RESET } from '../../constants/userConstants';
 const UserList = (props) => {
     const userList = useSelector((state) => state.userList);
     const { loading, error, users } = userList;
-
     const userDelete = useSelector((state) => state.userDelete);
     const {
         loading: loadingDelete,
@@ -53,7 +52,7 @@ const UserList = (props) => {
                     {users.map((user) => (
                     <tr key={user._id}>
                         <td>{user._id}</td>
-                        <td>{user.name}</td>
+                        <td>{`${user.firstName} ${user.lastName}`}</td>
                         <td>{user.email}</td>
                         <td>{user.isAdmin ? 'YES' : 'NO'}</td>
                         <td>
