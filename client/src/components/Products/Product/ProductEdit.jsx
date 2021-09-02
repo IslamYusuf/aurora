@@ -89,7 +89,6 @@ const ProductEdit = (props) => {
 
     return (
             <Container component="main" maxWidth="xs">
-            <CssBaseline />
             <div className={classes.paper}>
                 <form className={classes.form} onSubmit={submitHandler}>
                     <Typography component='h1' variant='h5'>

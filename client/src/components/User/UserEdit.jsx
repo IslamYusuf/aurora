@@ -50,7 +50,6 @@ const UserEdit = (props) => {
     }, [dispatch, props.history, successUpdate, user, userId]);
     return (
         <Container component="main" maxWidth="xs">
-            <CssBaseline />
             <div className={classes.paper}>
                 <Typography component="h1" variant="h5">
                     Edit User {`${firstName} ${lastName}`}

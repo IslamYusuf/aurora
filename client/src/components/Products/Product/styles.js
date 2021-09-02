@@ -22,4 +22,25 @@ export default makeStyles((theme) => ({
       paddingTop: '0px',
       marginTop: '0px',
     },
+    root: {
+       //maxWidth: 345, //original width style
+      maxWidth: '100%',
+      heigth: 0,
+    },
+    image: {
+      maxWidth: '29rem',
+      width: '100%',
+    },
+    media: {
+      height: 0,
+      paddingTop: '56.25%', // 16:9
+    },
+    cardActions: {
+      display: 'flex',
+      justifyContent: 'flex-end',
+    },
+    cardContent: {
+      display: 'flex',
+      justifyContent: 'space-between',
+    },
 }));

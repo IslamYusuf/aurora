@@ -1,13 +1,16 @@
 import {useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
+import Grid from '@material-ui/core/Grid';
 
 import Product from "./Product/Product"
 import Loading from '../Loading';
 import Message from '../Message';
 import { getProducts } from '../../actions/productActions';
+import useStyles from './styles';
 
 const Products = () => {
     const dispatch = useDispatch();
+    const classes = useStyles();
     const {loading, error, products} = useSelector(state => state.products);
 
     useEffect(() => {
@@ -15,18 +18,19 @@ const Products = () => {
     }, [dispatch]);
 
     return (
-        <div>
+        <main className={classes.content}>
             {loading ? <Loading></Loading>
             : error ? (<Message variant="danger">{error}</Message>)
-            : (<div className="row center">
-                {
-                    products.map( (product) => (
-                        <Product product={product} key={product._id} />
-                    ))
-                }    
-            </div>)
-            }
-        </div>
+            : (
+                <Grid container justifyContent="center" spacing={4}>
+                    {products.map((product) => (
+                        <Grid key={product._id} item xs={12} sm={6} md={4} lg={3}>
+                            <Product product={product} />
+                        </Grid>
+                    ))}
+                </Grid>
+            )}
+        </main>
     )
 }
 

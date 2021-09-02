@@ -1,12 +1,44 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import {
+    Table, TableBody, TableCell,TableHead, 
+    TableRow, Paper, TableContainer, Button,
+} from '@material-ui/core';
+import { 
+    withStyles, makeStyles  
+} from '@material-ui/core/styles';
 
 import { deleteUser, listUsers } from '../../actions/userActions';
 import Loading from '../Loading';
 import Message from '../Message';
 import { USER_DETAILS_RESET } from '../../constants/userConstants';
 
+const StyledTableCell = withStyles((theme) => ({
+    head: {
+      backgroundColor: theme.palette.common.black,
+      color: theme.palette.common.white,
+    },
+    body: {
+      fontSize: 14,
+    },
+}))(TableCell);
+
+const StyledTableRow = withStyles((theme) => ({
+root: {
+    '&:nth-of-type(odd)': {
+    backgroundColor: theme.palette.action.hover,
+    },
+},
+}))(TableRow);
+  
+const useStyles = makeStyles({
+    table: {
+        minWidth: 700,
+    },
+});
+
 const UserList = (props) => {
+    const classes = useStyles();
     const userList = useSelector((state) => state.userList);
     const { loading, error, users } = userList;
     const userDelete = useSelector((state) => state.userDelete);
@@ -38,43 +70,43 @@ const UserList = (props) => {
             {loading ? (<Loading></Loading>)
             : error ? (<Message variant="danger">{error}</Message>)
             : (
-                <table className="table">
-                <thead>
-                    <tr>
-                    <th>ID</th>
-                    <th>NAME</th>
-                    <th>EMAIL</th>
-                    <th>IS ADMIN</th>
-                    <th>ACTIONS</th>
-                    </tr>
-                </thead>
-                <tbody>
+                <TableContainer component={Paper}>
+                <Table className={classes.table} aria-label="customized table">
+                    <TableHead>
+                        <TableRow>
+                            <StyledTableCell>ID</StyledTableCell>
+                            <StyledTableCell align="right">NAME</StyledTableCell>
+                            <StyledTableCell align="right">EMAIL</StyledTableCell>
+                            <StyledTableCell align="right">IS ADMIN</StyledTableCell>
+                            <StyledTableCell align="right">ACTIONS</StyledTableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
                     {users.map((user) => (
-                    <tr key={user._id}>
-                        <td>{user._id}</td>
-                        <td>{`${user.firstName} ${user.lastName}`}</td>
-                        <td>{user.email}</td>
-                        <td>{user.isAdmin ? 'YES' : 'NO'}</td>
-                        <td>
-                        <button
-                            type="button"
-                            className="small"
-                            onClick={() => props.history.push(`/user/${user._id}/edit`)}
-                        >
-                            Edit
-                        </button>
-                        <button
-                            type="button"
-                            className="small"
-                            onClick={() => deleteHandler(user)}
-                        >
-                            Delete
-                        </button>
-                        </td>
-                    </tr>
+                        <StyledTableRow key={user._id}>
+                        <StyledTableCell >{user._id}</StyledTableCell>
+                        <StyledTableCell component="th" scope="row">
+                            {`${user.firstName} ${user.lastName}`}
+                        </StyledTableCell>
+                        <StyledTableCell align="right">{user.email}</StyledTableCell>
+                        <StyledTableCell align="right">{user.isAdmin ? 'YES' : 'NO'}</StyledTableCell>
+                        <StyledTableCell align="right">
+                            <Button 
+                            color='primary' variant='outlined' 
+                            onClick={() => props.history.push(`/user/${user._id}/edit`)}>
+                                Edit
+                            </Button>
+                            <Button 
+                            color='secondary' variant='outlined' 
+                            onClick={() => deleteHandler(user)}>
+                                Delete
+                            </Button>
+                        </StyledTableCell>
+                        </StyledTableRow>
                     ))}
-                </tbody>
-                </table>
+                    </TableBody>
+                </Table>
+            </TableContainer>
             )}
         </div>
     )

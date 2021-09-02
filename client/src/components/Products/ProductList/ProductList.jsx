@@ -2,14 +2,45 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {useHistory} from 'react-router-dom';
 //import { Link, useParams } from 'react-router-dom';
-
+import {
+    Table, TableBody, TableCell,TableHead, 
+    TableRow, Paper, TableContainer, Button,
+} from '@material-ui/core';
+import { 
+    withStyles, makeStyles  
+} from '@material-ui/core/styles';
 
 import {createProduct,deleteProduct,getProducts,} from '../../../actions/productActions';
 import Loading from '../../Loading';
 import Message from '../../Message';
 import {PRODUCT_CREATE_RESET,PRODUCT_DELETE_RESET,} from '../../../constants/productConstants';
 
+const StyledTableCell = withStyles((theme) => ({
+    head: {
+      backgroundColor: theme.palette.common.black,
+      color: theme.palette.common.white,
+    },
+    body: {
+      fontSize: 14,
+    },
+}))(TableCell);
+
+const StyledTableRow = withStyles((theme) => ({
+root: {
+    '&:nth-of-type(odd)': {
+    backgroundColor: theme.palette.action.hover,
+    },
+},
+}))(TableRow);
+  
+const useStyles = makeStyles({
+    table: {
+        minWidth: 700,
+    },
+});
+
 const ProductList = () => {
+    const classes = useStyles();
     const history = useHistory();
     const { loading, error, products,} = useSelector((state) => state.products);
 
@@ -52,61 +83,59 @@ const ProductList = () => {
         <div>
             <div className="row">
                 <h1>Products</h1>
-                <button type="button" className="primary" onClick={createHandler}>
+                <Button color='primary' variant='outlined'
+                onClick={createHandler}>
                     Create Product
-                </button>
+                </Button>
             </div>
             {loadingDelete && <Loading></Loading>}
             {errorDelete && <Message variant="danger">{errorDelete}</Message>}
-
             {loadingCreate && <Loading></Loading>}
             {errorCreate && <Message variant="danger">{errorCreate}</Message>}
             {loading ? (<Loading></Loading>) : error
             ? (<Message variant="danger">{error}</Message>) 
-            : (
-                <>
-                    <table className="table">
-                        <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>NAME</th>
-                            <th>PRICE</th>
-                            <th>CATEGORY</th>
-                            <th>BRAND</th>
-                            <th>ACTIONS</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {products.map((product) => (
-                            <tr key={product._id}>
-                            <td>{product._id}</td>
-                            <td>{product.name}</td>
-                            <td>{product.price}</td>
-                            <td>{product.category}</td>
-                            <td>{product.brand}</td>
-                            <td>
-                                <button
-                                type="button"
-                                className="small"
-                                onClick={() =>
-                                    history.push(`/product/${product._id}/edit`)
-                                }
-                                >
+            :(
+                <TableContainer component={Paper}>
+                <Table className={classes.table} aria-label="customized table">
+                    <TableHead>
+                        <TableRow>
+                            <StyledTableCell>ID</StyledTableCell>
+                            <StyledTableCell align="right">NAME</StyledTableCell>
+                            <StyledTableCell align="right">PRICE</StyledTableCell>
+                            <StyledTableCell align="right">CATEGORY</StyledTableCell>
+                            <StyledTableCell align="right">BRAND</StyledTableCell>
+                            <StyledTableCell align="right">ACTIONS</StyledTableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                    {products.map((product) => (
+                        <StyledTableRow key={product._id}>
+                        <StyledTableCell component="th" scope="row">
+                            {product._id}
+                        </StyledTableCell>
+                        <StyledTableCell align="right">{product.name}</StyledTableCell>
+                        <StyledTableCell align="right">{product.price}</StyledTableCell>
+                        <StyledTableCell align="right">{product.category}</StyledTableCell>
+                        <StyledTableCell align="right">{product.brand}</StyledTableCell>
+                        <StyledTableCell align="right">
+                            <Button 
+                            color='primary' variant='outlined' 
+                            onClick={() =>
+                                history.push(`/product/${product._id}/edit`)
+                            }>
                                 Edit
-                                </button>
-                                <button
-                                type="button"
-                                className="small"
-                                onClick={() => deleteHandler(product)}
-                                >
+                            </Button>
+                            <Button 
+                            color='secondary' variant='outlined' 
+                            onClick={() => deleteHandler(product)}>
                                 Delete
-                                </button>
-                            </td>
-                            </tr>
-                        ))}
-                        </tbody>
-                    </table>
-                </>
+                            </Button>
+                        </StyledTableCell>
+                        </StyledTableRow>
+                    ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
             )}
         </div>
     )

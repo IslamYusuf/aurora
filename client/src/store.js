@@ -1,20 +1,19 @@
 import {createStore, compose, applyMiddleware, combineReducers} from 'redux';
 import thunk from 'redux-thunk';
 
-//productCreate,productDelete,productList,productUpdate
+
 import { 
     products, product, productCreate,
     productDelete, productUpdate, 
 } from './reducers/productReducers';
 import { cart } from './reducers/cartReducers';
 
-//userList,userDelete,userUpdate
+
 import {
     user, userDetails, updatedUserProfile,
     userDelete, userList, userUpdate
 } from './reducers/userReducers';
-//orderCreate, orderDelete,orderDeliver,orderListAll,
-//orderPay,orderSummary
+
 import { order,orderDetails,orderPayment,
     orderList, orderDelete, orderSummary
 } from './reducers/orderReducers';
@@ -32,14 +31,10 @@ const initialState = {
         shippingAddress: localStorage.getItem('shippingAddress')
             ? JSON.parse(localStorage.getItem('shippingAddress'))
             : {},
-        paymentMethod : 'PayPal',
+        paymentMethod : 'Stripe',
     }
 }
 
-/*
-Additional reducers {productCreate,, productUpdate, productDelete,
-orderList,orderDelete,orderDelivery,userList,userDelete,orderSummary}
- */
 const reducer = combineReducers({
     products,
     product,

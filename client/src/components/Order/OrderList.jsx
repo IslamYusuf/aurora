@@ -1,12 +1,44 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import {
+    Table, TableBody, TableCell,TableHead, 
+    TableRow, Paper, TableContainer, Button,
+} from '@material-ui/core';
+import { 
+    withStyles, makeStyles  
+} from '@material-ui/core/styles';
 
 import { deleteOrder, listAllOrders } from '../../actions/orderActions';
 import Loading from '../Loading';
 import Message from '../Message';
 import { ORDER_DELETE_RESET } from '../../constants/orderConstants';
 
+const StyledTableCell = withStyles((theme) => ({
+    head: {
+      backgroundColor: theme.palette.common.black,
+      color: theme.palette.common.white,
+    },
+    body: {
+      fontSize: 14,
+    },
+}))(TableCell);
+
+const StyledTableRow = withStyles((theme) => ({
+root: {
+    '&:nth-of-type(odd)': {
+    backgroundColor: theme.palette.action.hover,
+    },
+},
+}))(TableRow);
+  
+const useStyles = makeStyles({
+    table: {
+        minWidth: 700,
+    },
+});
+
 const OrderList = (props) => {
+    const classes = useStyles();
     const orderList = useSelector((state) => state.orderList);
     const { loading, error, orders } = orderList;
     const orderDelete = useSelector((state) => state.orderDelete);
@@ -35,54 +67,52 @@ const OrderList = (props) => {
             {errorDelete && <Message variant="danger">{errorDelete}</Message>}
             {loading ? (<Loading></Loading>)
             : error ? (<Message variant="danger">{error}</Message>) 
-            : (
-                <table className="table">
-                <thead>
-                    <tr>
-                    <th>ID</th>
-                    <th>USER</th>
-                    <th>DATE</th>
-                    <th>TOTAL</th>
-                    <th>PAID</th>
-                    <th>DELIVERED</th>
-                    <th>ACTIONS</th>
-                    </tr>
-                </thead>
-                <tbody>
+            :(
+                <TableContainer component={Paper}>
+                <Table className={classes.table} aria-label="customized table">
+                    <TableHead>
+                        <TableRow>
+                            <StyledTableCell>ID</StyledTableCell>
+                            <StyledTableCell align="right">USER</StyledTableCell>
+                            <StyledTableCell align="right">Date</StyledTableCell>
+                            <StyledTableCell align="right">TOTAL</StyledTableCell>
+                            <StyledTableCell align="right">PAID</StyledTableCell>
+                            <StyledTableCell align="right">DELIVERED</StyledTableCell>
+                            <StyledTableCell align="right">ACTIONS</StyledTableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
                     {orders.map((order) => (
-                    <tr key={order._id}>
-                        <td>{order._id}</td>
-                        <td>{order.shippingAddress.fullName}</td>
-                        <td>{order.createdAt.substring(0, 10)}</td>
-                        <td>{order.totalPrice.toFixed(2)}</td>
-                        <td>{order.isPaid ? order.paidAt.substring(0, 10) : 'No'}</td>
-                        <td>
-                        {order.isDelivered
-                            ? order.deliveredAt.substring(0, 10)
-                            : 'No'}
-                        </td>
-                        <td>
-                        <button
-                            type="button"
-                            className="small"
-                            onClick={() => {
-                            props.history.push(`/order/${order._id}`);
-                            }}
-                        >
-                            Details
-                        </button>
-                        <button
-                            type="button"
-                            className="small"
-                            onClick={() => deleteHandler(order)}
-                        >
-                            Delete
-                        </button>
-                        </td>
-                    </tr>
+                        <StyledTableRow key={order._id}>
+                        <StyledTableCell component="th" scope="row">
+                            {order._id}
+                        </StyledTableCell>
+                        <StyledTableCell align="right">{order.shippingAddress.fullName}</StyledTableCell>
+                        <StyledTableCell align="right">{order.createdAt.substring(0, 10)}</StyledTableCell>
+                        <StyledTableCell align="right">{order.totalPrice.toFixed(2)}</StyledTableCell>
+                        <StyledTableCell align="right">{order.isPaid ? order.paidAt.substring(0, 10) : "No"}</StyledTableCell>
+                        <StyledTableCell align="right">
+                            {order.isDelivered
+                                ? order.deliveredAt.substring(0, 10)
+                                : "No"}
+                        </StyledTableCell>
+                        <StyledTableCell align="right">
+                            <Button 
+                            color='primary' variant='outlined' 
+                            onClick={() => props.history.push(`/order/${order._id}`)}>
+                                Details
+                            </Button>
+                            <Button 
+                            color='secondary' variant='outlined' 
+                            onClick={() => deleteHandler(order)}>
+                                Delete
+                            </Button>
+                        </StyledTableCell>
+                        </StyledTableRow>
                     ))}
-                </tbody>
-                </table>
+                    </TableBody>
+                </Table>
+            </TableContainer>
             )}     
         </div>
     )

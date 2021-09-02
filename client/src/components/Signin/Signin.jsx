@@ -1,12 +1,33 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {Link, useHistory, useLocation } from 'react-router-dom';
+import {useHistory, useLocation, Link } from 'react-router-dom';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import {
+    Avatar, Button, CssBaseline, TextField, 
+    Grid, Box, Typography, Container,
+} from '@material-ui/core';
 
 import { signin } from '../../actions/userActions';
 import Loading from '../Loading';
 import Message from '../Message';
+import useStyles from './styles';
 
-const Signin = () => {
+
+function Copyright() {
+  return (
+    <Typography variant="body2" color="textSecondary" align="center">
+      {'Copyright © '}
+      <Link to='/'>
+        Aurora
+      </Link>{' '}
+      {new Date().getFullYear()}
+      {'.'}
+    </Typography>
+  );
+}
+
+export default function SignIn() {
+    const classes = useStyles();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const {search} = useLocation();
@@ -27,48 +48,65 @@ const Signin = () => {
         if(userInfo){
             history.push(redirect);
         }
-    }, [history, redirect, userInfo]);
+}, [history, redirect, userInfo]);
 
-    return (
-        <div>
-           <form className="form" onSubmit={submitHandler}>
-                <div>
-                    <h1>Sign In</h1>
-                </div>
-                {loading && <Loading/>}
-                {error && <Message variant="danger">{error}</Message>}   
-                <div>
-                    <label htmlFor="email">Email address</label>
-                    <input
-                    type='email'
-                    id='email'
-                    placeholder='Enter Email'
-                    required
-                    onChange={(e) => setEmail(e.target.value)}></input>
-                </div>
-                <div>
-                    <label htmlFor="password">Password</label>
-                    <input
-                    type='password'
-                    id='password'
-                    placeholder='Enter Password'
-                    required
-                    onChange={(e) => setPassword(e.target.value)}></input>
-                </div>
-                <div>
-                    <label/>
-                    <button className="primary" type="submit"> Sign In</button>
-                </div>
-                <div>
-                    <label />
-                    <div>
-                        New Customer? {' '}
-                        <Link to={`/signup?redirect=${redirect}`}>Create your acccount</Link>
-                    </div>
-                </div>
-            </form> 
-        </div>
-    )
+  return (
+    <Container component="main" maxWidth="xs">
+      <div className={classes.paper}>
+        <Avatar className={classes.avatar}>
+          <LockOutlinedIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          Sign in
+        </Typography>
+        {loading && <Loading/>}
+        {error && <Message variant="danger">{error}</Message>}
+        <form className={classes.form} onSubmit={submitHandler}>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            id="email"
+            label="Email Address"
+            name="email"
+            autoComplete="email"
+            autoFocus
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="Password"
+            type="password"
+            id="password"
+            autoComplete="current-password"
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={classes.submit}
+          >
+            Sign In
+          </Button>
+          <Grid container justifyContent='flex-end'>
+            <Grid item>
+              <Link to="/signup" >
+                {"Don't have an account? Sign Up"}
+              </Link>
+            </Grid>
+          </Grid>
+        </form>
+      </div>
+      <Box mt={8}>
+        <Copyright />
+      </Box>
+    </Container>
+  );
 }
-
-export default Signin;

@@ -1,10 +1,17 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams, useLocation, useHistory, Link } from 'react-router-dom';
-import { addToCart, removeFromCart, } from '../../actions/cartActions';
+import { useParams, useLocation, useHistory, Link} from 'react-router-dom';
+import { addToCart, removeFromCart, emptyCart} from '../../actions/cartActions';
+import { 
+    Container, Typography, Button, 
+    Grid, Card, CardMedia,CardActions, CardContent 
+} from '@material-ui/core';
+
 import Message from '../Message';
+import useStyles from './styles';
 
 const Cart = () => {
+    const classes = useStyles();
     const dispatch = useDispatch();
     const history = useHistory();
     const params = useParams();
@@ -24,88 +31,86 @@ const Cart = () => {
     const removeFromCartHandler = (id) => {
         dispatch(removeFromCart(id))
     }
-    
+    const addToCartHandler = (sign, product, qty, countInStock) =>{
+        if(sign === 'ADD'){
+            dispatch(addToCart(product, (qty + 1) > countInStock ? countInStock : qty + 1))
+        }
+        else dispatch(addToCart(product, (qty - 1) < 1 ? 1 : qty - 1))
+    }
     const checkoutHandler = () =>{
         history.push('/signin?redirect=shipping')
     }
 
+    const renderEmptyCart = () => (
+        <Typography variant="h5">You have no items in your shopping cart,
+          <Link  to="/"> start shopping</Link>!
+        </Typography>
+      );
+
+    const renderCart = () => (
+        <Grid container spacing={2}>
+          {cartItems.map((item) => (
+                <Grid item xs={12} sm={3} key={item.product}>
+                    <Card className="cartItem">
+                        <div >
+                            <Link to={`/product/${item.product}`}>
+                                <img height='230px' width='100%' src={item.image} alt={item.name}/>
+                            </Link>
+                        </div>
+                        <CardContent className={classes.cardContent}>
+                            <Link to={`/product/${item.product}`}>
+                                <Typography variant="h4">{item.name}</Typography>
+                            </Link>
+                            <Typography variant="h5">{`Ksh${item.price}`}</Typography>
+                        </CardContent>
+                        <CardActions className={classes.cartActions}>
+                            <div className={classes.buttons}>
+                                <Button 
+                                type="button" size="small"
+                                onClick={() => addToCartHandler('MINUS',item.product, item.qty,item.countInStock)}
+                                >-</Button>
+                                <Typography>&nbsp;{item.qty}&nbsp;</Typography>
+                                <Button 
+                                type="button" size="small" 
+                                onClick={() => addToCartHandler('ADD',item.product, item.qty,item.countInStock)}
+                                >+</Button>
+                            </div>
+                            <Button 
+                            variant="contained" type="button" color="secondary" 
+                            onClick={() => removeFromCartHandler(item.product)}
+                            >Delete</Button>
+                        </CardActions>
+                    </Card>
+                </Grid>
+            ))}
+          <div className={classes.cardDetails}>
+            <Typography variant="h4">
+                Subtotal ({cartItems.reduce((a, c) => a + c.qty, 0)} items)
+                : ${cartItems.reduce((a,c) => a + c.price * c.qty, 0)}
+            </Typography>
+            <div >
+              <Button 
+               size="large" type="button" 
+               className={classes.emptyButton}
+              variant="contained" color="secondary" onClick={() => dispatch(emptyCart())}
+              >Empty cart</Button>
+              <Button  onClick={checkoutHandler}
+              className={classes.checkoutButton}
+              size="large" type="button" variant="contained" 
+              color="primary" disabled={cartItems.length === 0}>
+                  Proceed To Checkout
+                </Button>
+            </div>
+          </div>
+        </Grid>
+      );
+
     return (
-        <div className='row top'>
-            <div className='col-2'>
-                <h1>Shopping Cart</h1>
-                {
-                    cartItems.length === 0 
-                    ? <Message>
-                        Cart is Empty. <Link to='/'>Go Shopping</Link>
-                    </Message>
-                    : (
-                        <ul>
-                            {
-                                cartItems.map((item) => (
-                                    <li key={item.product}>
-                                        <div className='row' >
-                                            <div>
-                                                <img 
-                                                src={item.image}
-                                                alt={item.name}
-                                                className='small' />
-                                            </div>
-                                            <div className='min-30' >
-                                                <Link to={`/product/${item.product}`} >{item.name}</Link>
-                                            </div>
-                                            <div>
-                                                <select 
-                                                value={item.qty} 
-                                                onChange={e => 
-                                                dispatch(
-                                                    addToCart(item.product, Number(e.target.value))
-                                                    )
-                                                }>
-                                                    {
-                                                                [...Array(item.countInStock).keys()].map(
-                                                                    (x) => (
-                                                                        <option key={x +1} value={x + 1}>{x + 1}</option>
-                                                                    )
-                                                                )
-                                                            }
-                                                </select>
-                                            </div>
-                                            <div>${item.price}</div>
-                                            <div>
-                                                <button
-                                                type='button'
-                                                onClick={() => removeFromCartHandler(item.product)} >
-                                                    Delete
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </li>
-                                ))
-                            }
-                        </ul>
-                    )
-                }
-            </div>
-            <div className='col-1' >
-                <div className='card card-body'>
-                    <ul>
-                        <li>
-                            <h2>
-                                Subtotal ({cartItems.reduce((a, c) => a + c.qty, 0)} items)
-                                : ${cartItems.reduce((a,c) => a + c.price * c.qty, 0)}
-                            </h2>
-                        </li>
-                        <li>
-                            <button
-                            type='button'
-                            onClick={checkoutHandler}
-                            className='primary block'
-                            disabled={cartItems.length === 0}>Proceed To Checkout</button>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+        <Container>
+            <div className={classes.toolbar} />
+            <Typography className={classes.title} variant="h3" gutterBottom>Shopping Cart</Typography>
+            { !cartItems.length ? renderEmptyCart() : renderCart() }
+        </Container>
     )
 }
 
