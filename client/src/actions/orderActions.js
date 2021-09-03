@@ -95,7 +95,6 @@ export const listAllOrders = () => async (dispatch, getState) => {
       const { data } = await Axios.get(`/api/orders/`, {
         headers: { Authorization: `Bearer ${userInfo.token}` },
       });
-      console.log(data);
       dispatch({ type: ORDER_LIST_SUCCESS, payload: data });
     } catch (error) {
       const message =
@@ -125,13 +124,9 @@ export const deleteOrder = (orderId) => async (dispatch, getState) => {
   
 export const deliverOrder = (orderId) => async (dispatch, getState) => {
     dispatch({ type: ORDER_DELIVER_REQUEST, payload: orderId });
-    const {
-      user: { userInfo },
-    } = getState();
+    const {user: { userInfo },} = getState();
     try {
-      const { data } = Axios.put(
-        `/api/orders/${orderId}/deliver`,
-        {},
+      const { data } = Axios.put(`/api/orders/${orderId}/deliver`,{},
         {
           headers: { Authorization: `Bearer ${userInfo.token}` },
         }

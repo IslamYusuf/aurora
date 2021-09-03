@@ -1,25 +1,57 @@
 import { useEffect } from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
-import { detailsOrder, payOrder } from '../../actions/orderActions';
+import { Typography, Button, Divider } from '@material-ui/core';
+import { Elements, CardElement, ElementsConsumer } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
 
+import { deliverOrder, detailsOrder, payOrder } from '../../actions/orderActions';
+import { ORDER_DELIVER_RESET, ORDER_PAY_RESET } from '../../constants/orderConstants';
 import Loading from '../Loading';
 import Message from '../Message';
+
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY);
 
 const Order = () => {
     const dispatch = useDispatch();
     const {id} = useParams();
     const {order, loading, error } = useSelector(state => state.orderDetails);
-    const {success, error: errorPay, loading: loadingPay} = useSelector(state => state.orderPayment);
+    const {success:successPay, error: errorPay, loading: loadingPay} = useSelector(state => state.orderPayment);
+    const {
+        loading: loadingDeliver,
+        error: errorDeliver,
+        success: successDeliver,
+      } = useSelector((state) => state.orderDeliver);
+    const {userInfo} = useSelector((state) => state.user);
+
+    const deliverHandler = () => {
+        dispatch(deliverOrder(order._id));
+    };
+    const handleSubmit = async (e, elements, stripe) => {
+        e.preventDefault();
+
+        if (!stripe || !elements) return;
+
+        const cardElement = elements.getElement(CardElement);
+
+        const { error, paymentMethod } = await stripe.createPaymentMethod({ type: 'card', card: cardElement });
+
+        if (error) {
+            console.log('[error]', error);
+        } else {
+            //console.log(paymentMethod)
+            dispatch(payOrder(order, paymentMethod));
+        }
+    };
 
     useEffect(() => {
-        dispatch(detailsOrder(id))
-    }, [dispatch, id])
-
-    // This Handler is for implementing succesful payment transsaction (Srtirpe)
-    const successPaymentHandler = (paymentResult) => {
-        dispatch(payOrder(order, paymentResult));
-    }
+        //dispatch(detailsOrder(id))
+        if (!order || successPay || successDeliver || (order && order._id !== id)){
+            dispatch({ type: ORDER_PAY_RESET });
+            dispatch({ type: ORDER_DELIVER_RESET });
+            dispatch(detailsOrder(id));
+          } 
+    }, [dispatch, id, order, successDeliver, successPay])
  
     return loading ? (<Loading />) 
     : error ? (<Message variant='danger' >{error}</Message>)
@@ -39,7 +71,7 @@ const Order = () => {
                                     {order.shippingAddress.country}
                                 </p>
                                 {order.isDelivered 
-                                ? (<Message variant='success'>Delivered at {order.deliveredAt}</Message>)
+                                ? (<Message variant='success'>Delivered at {order.updatedAt}</Message>)
                                 : (<Message variant='danger'>Not Delivered</Message>)
                             }
                             </div>
@@ -119,10 +151,51 @@ const Order = () => {
                                     </div>
                                 </div>
                             </li>
+                            {!order.isPaid && (
+                                <li>
+                                    {!stripePromise ? (<Loading></Loading>) 
+                                    : (
+                                        <>
+                                        {errorPay && (<Message variant="danger">{errorPay}</Message>)}
+                                        {loadingPay && <Loading></Loading>}
+                                        <Divider />
+                                        <Typography variant="h6" gutterBottom style={{ margin: '20px 0' }}>Payment method</Typography>
+                                        <Elements stripe={stripePromise}>
+                                            <ElementsConsumer>{({ elements, stripe }) => (
+                                                <form onSubmit={(e) => handleSubmit(e, elements, stripe)}>
+                                                    <CardElement />
+                                                    <br /> <br />
+                                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                                    <Button type="submit" variant="contained" disabled={!stripe} color="primary">
+                                                        Pay Ksh{order.totalPrice.toFixed(2)}
+                                                    </Button>
+                                                    </div>
+                                                </form>
+                                            )}
+                                            </ElementsConsumer>
+                                        </Elements>
+                                        </>
+                                    )}
+                                </li>
+                            )}
+                            {userInfo.isAdmin && order.isPaid && !order.isDelivered && (
+                                <li>
+                                    {loadingDeliver && <Loading></Loading>}
+                                    {errorDeliver && (
+                                        <Message variant="danger">{errorDeliver}</Message>
+                                    )}
+                                    <button
+                                        type="button"
+                                        className="primary block"
+                                        onClick={deliverHandler}
+                                    >
+                                        Deliver Order
+                                    </button>
+                                </li>
+                            )}
                         </ul>
                     </div>
                 </div>
-
             </div>
         </div>
     )

@@ -15,7 +15,7 @@ import {
 } from './reducers/userReducers';
 
 import { order,orderDetails,orderPayment,
-    orderList, orderDelete, orderSummary
+    orderList, orderDelete, orderSummary, orderDeliver,
 } from './reducers/orderReducers';
 
 const initialState = {
@@ -52,6 +52,7 @@ const reducer = combineReducers({
     orderList,
     orderDelete,
     orderSummary,
+    orderDeliver,
     userDetails,
     updatedUserProfile,
 })

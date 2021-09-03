@@ -91,7 +91,7 @@ export const orderDelete = (state = {}, action) => {
     }
 };
 
-export const orderDeliverReducer = (state = {}, action) => {
+export const orderDeliver = (state = {}, action) => {
     switch (action.type) {
       case ORDER_DELIVER_REQUEST:
         return { loading: true };

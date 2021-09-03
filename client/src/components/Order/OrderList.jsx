@@ -93,7 +93,7 @@ const OrderList = (props) => {
                         <StyledTableCell align="right">{order.isPaid ? order.paidAt.substring(0, 10) : "No"}</StyledTableCell>
                         <StyledTableCell align="right">
                             {order.isDelivered
-                                ? order.deliveredAt.substring(0, 10)
+                                ? order.updatedAt.substring(0, 10)
                                 : "No"}
                         </StyledTableCell>
                         <StyledTableCell align="right">

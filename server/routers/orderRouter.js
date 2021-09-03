@@ -98,9 +98,9 @@ orderRouter.put('/:id/pay', isAuth, expressAsyncHandler(async (req, res) =>{
         order.paidAt = Date.now()
         order.paymentResult = {
             id: req.body.id,
-            status: req.body.status,
-            updateTime: req.body.updateTime,
-            emailAddress: req.body.emailAddress,
+            status: true,
+            updateTime: req.body.created,
+            emailAddress: req.user.email,
         }
 
         const updatedOrder = await order.save();
@@ -125,10 +125,7 @@ orderRouter.delete(
     })
 );
 
-orderRouter.put(
-    '/:id/deliver',
-    isAuth,
-    isAdmin,
+orderRouter.put('/:id/deliver',isAuth,isAdmin,
     expressAsyncHandler(async (req, res) => {
       const order = await Order.findById(req.params.id);
       if (order) {
