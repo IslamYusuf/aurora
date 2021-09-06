@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     Table, TableBody, TableCell,TableHead, 
-    TableRow, Paper, TableContainer, Button,
+    TableRow, Paper, TableContainer, Button, ButtonGroup,
 } from '@material-ui/core';
 import { 
     withStyles, makeStyles  
@@ -34,6 +34,9 @@ root: {
 const useStyles = makeStyles({
     table: {
         minWidth: 700,
+    },
+    container:{
+        marginBottom: 25,
     },
 });
 
@@ -70,8 +73,8 @@ const UserList = (props) => {
             {loading ? (<Loading></Loading>)
             : error ? (<Message variant="danger">{error}</Message>)
             : (
-                <TableContainer component={Paper}>
-                <Table className={classes.table} aria-label="customized table">
+                <TableContainer component={Paper} className={classes.container}>
+                <Table className={classes.table} aria-label="customized table"size='small'>
                     <TableHead>
                         <TableRow>
                             <StyledTableCell>ID</StyledTableCell>
@@ -84,23 +87,26 @@ const UserList = (props) => {
                     <TableBody>
                     {users.map((user) => (
                         <StyledTableRow key={user._id}>
-                        <StyledTableCell >{user._id}</StyledTableCell>
-                        <StyledTableCell component="th" scope="row">
+                        <StyledTableCell scope="row">{user._id}</StyledTableCell>
+                        <StyledTableCell component="th" align='right'>
                             {`${user.firstName} ${user.lastName}`}
                         </StyledTableCell>
                         <StyledTableCell align="right">{user.email}</StyledTableCell>
                         <StyledTableCell align="right">{user.isAdmin ? 'YES' : 'NO'}</StyledTableCell>
                         <StyledTableCell align="right">
-                            <Button 
-                            color='primary' variant='outlined' 
-                            onClick={() => props.history.push(`/user/${user._id}/edit`)}>
-                                Edit
-                            </Button>
-                            <Button 
-                            color='secondary' variant='outlined' 
-                            onClick={() => deleteHandler(user)}>
-                                Delete
-                            </Button>
+                            <ButtonGroup variant="contained" disableFocusRipple 
+                            disableRipple size='small'>
+                                <Button 
+                                color='primary' size='small'
+                                onClick={() => props.history.push(`/user/${user._id}/edit`)}>
+                                    Edit
+                                </Button>
+                                <Button 
+                                color='secondary' size='small'
+                                onClick={() => deleteHandler(user)}>
+                                    Delete
+                                </Button>
+                            </ButtonGroup>
                         </StyledTableCell>
                         </StyledTableRow>
                     ))}

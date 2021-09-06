@@ -4,7 +4,7 @@ import {useHistory} from 'react-router-dom';
 //import { Link, useParams } from 'react-router-dom';
 import {
     Table, TableBody, TableCell,TableHead, 
-    TableRow, Paper, TableContainer, Button,
+    TableRow, Paper, TableContainer, Button, ButtonGroup,
 } from '@material-ui/core';
 import { 
     withStyles, makeStyles  
@@ -36,6 +36,11 @@ root: {
 const useStyles = makeStyles({
     table: {
         minWidth: 700,
+        //marginBottom: 20,
+        marginTop: 5,
+    },
+    container:{
+        marginBottom: 25,
     },
 });
 
@@ -83,7 +88,7 @@ const ProductList = () => {
         <div>
             <div className="row">
                 <h1>Products</h1>
-                <Button color='primary' variant='outlined'
+                <Button color='primary' variant='contained' 
                 onClick={createHandler}>
                     Create Product
                 </Button>
@@ -95,8 +100,8 @@ const ProductList = () => {
             {loading ? (<Loading></Loading>) : error
             ? (<Message variant="danger">{error}</Message>) 
             :(
-                <TableContainer component={Paper}>
-                <Table className={classes.table} aria-label="customized table">
+                <TableContainer component={Paper} className={classes.container}>
+                <Table className={classes.table} aria-label="customized table"size='small'>
                     <TableHead>
                         <TableRow>
                             <StyledTableCell>ID</StyledTableCell>
@@ -118,18 +123,22 @@ const ProductList = () => {
                         <StyledTableCell align="right">{product.category}</StyledTableCell>
                         <StyledTableCell align="right">{product.brand}</StyledTableCell>
                         <StyledTableCell align="right">
-                            <Button 
-                            color='primary' variant='outlined' 
-                            onClick={() =>
-                                history.push(`/product/${product._id}/edit`)
-                            }>
-                                Edit
-                            </Button>
-                            <Button 
-                            color='secondary' variant='outlined' 
-                            onClick={() => deleteHandler(product)}>
-                                Delete
-                            </Button>
+                            <ButtonGroup variant="contained" disableFocusRipple 
+                            disableRipple size='small'>
+                                <Button 
+                                color='primary'  size='small'
+                                onClick={() =>
+                                    history.push(`/product/${product._id}/edit`)
+                                }>
+                                    Edit
+                                </Button>
+                                <Button 
+                                color='secondary'  size='small'
+                                onClick={() => deleteHandler(product)}>
+                                    Delete
+                                </Button>    
+                            </ButtonGroup>
+                            
                         </StyledTableCell>
                         </StyledTableRow>
                     ))}

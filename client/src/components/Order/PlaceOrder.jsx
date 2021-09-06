@@ -1,3 +1,4 @@
+import { Button } from '@material-ui/core';
 import { useEffect } from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
@@ -80,7 +81,7 @@ const PlaceOrder = () => {
                                                         <Link to={`/product/${item.product}`} >{item.name}</Link>
                                                     </div>
                                 
-                                                    <div>{item.qty} x ${item.price} = ${item.qty * item.price}</div>
+                                                    <div>{item.qty} x Ksh{item.price} = Ksh{item.qty * item.price}</div>
                                                     
                                                 </div>
                                             </li>
@@ -100,13 +101,13 @@ const PlaceOrder = () => {
                             <li>
                                 <div className='row'>
                                     <div>Items</div>
-                                    <div>${cart.itemsPrice.toFixed(2)}</div>
+                                    <div>Ksh{cart.itemsPrice.toFixed(2)}</div>
                                 </div>
                             </li>
                             <li>
                                 <div className='row'>
                                     <div>Shipping</div>
-                                    <div>${cart.shippingPrice.toFixed(2)}</div>
+                                    <div>Ksh{cart.shippingPrice.toFixed(2)}</div>
                                 </div>
                             </li>
                             <li>
@@ -121,19 +122,18 @@ const PlaceOrder = () => {
                                         <strong>Order Total</strong>
                                     </div>
                                     <div>
-                                        <strong>${cart.totalPrice.toFixed(2)}</strong>
+                                        <strong>Ksh{cart.totalPrice.toFixed(2)}</strong>
                                     </div>
                                 </div>
                             </li>
                             <li>
-                                <button
-                                    type='button'
+                                <Button
                                     onClick={placeOrderHandler}
-                                    className='primary block'
+                                    fullWidth variant='contained' color='primary'
                                     disabled={cartItems.length === 0}
                                 >
                                     Place Order
-                                </button>
+                                </Button>
                             </li>
                             {loading && <Loading />}
                             {error && <Message variant='danger' >{error}</Message>}

@@ -39,13 +39,11 @@ const Order = () => {
         if (error) {
             console.log('[error]', error);
         } else {
-            //console.log(paymentMethod)
             dispatch(payOrder(order, paymentMethod));
         }
     };
 
     useEffect(() => {
-        //dispatch(detailsOrder(id))
         if (!order || successPay || successDeliver || (order && order._id !== id)){
             dispatch({ type: ORDER_PAY_RESET });
             dispatch({ type: ORDER_DELIVER_RESET });

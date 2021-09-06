@@ -2,8 +2,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Axios from 'axios';
 import {
-    Avatar, Button, CssBaseline, TextField, 
-    Grid, Box, Typography, Container,
+    Button, TextField, Grid, Typography, Container,
 } from '@material-ui/core';
 
 import { getProduct, updateProduct } from '../../../actions/productActions';
@@ -52,14 +51,8 @@ const ProductEdit = (props) => {
         e.preventDefault();
         // TODO: dispatch update product
         dispatch(updateProduct({
-            _id: productId,
-            name,
-            price,
-            image,
-            category,
-            brand,
-            countInStock,
-            description,
+            _id: productId, name, price, image, category,
+            brand, countInStock, description,
         })
         );
     };

@@ -1,6 +1,9 @@
 import {Link, useParams, useHistory} from 'react-router-dom';
 import {useSelector, useDispatch} from 'react-redux';
 import {useEffect, useState} from 'react';
+import {
+    Typography, Button,
+} from '@material-ui/core';
 
 import Rating from '../Rating';
 import Loading from '../../Loading';
@@ -37,14 +40,20 @@ const ProductDetails = () => {
                         <div className="col-1">
                             <ul>
                                 <li>
-                                    <h1>{product.name}</h1>
+                                    <Typography variant='h1' style={{ fontWeight: 600}}>
+                                        {product.name}
+                                    </Typography>
                                 </li>
                                 <li>
                                     <Rating rating={product.rating} reviews={product.numReviews}  />
                                 </li>
-                                <li>Price: ${product.price}</li>
-                                <li>Description:
-                                    <p>{product.description}</p>
+                                <li>
+                                    <Typography>Price: Ksh{product.price}</Typography>
+                                </li>
+                                <li>Description: 
+                                    <Typography>
+                                        {product.description}
+                                    </Typography>
                                 </li>
                             </ul>
                         </div>
@@ -53,19 +62,21 @@ const ProductDetails = () => {
                                 <ul>
                                     <li>
                                         <div className="row" >
-                                            <div>Price</div>
-                                            <div className="price">${product.price}</div>
+                                            <Typography>Price</Typography>
+                                            <Typography style={{ fontSize: '2rem'}}>
+                                                Ksh{product.price}
+                                            </Typography>
                                         </div>
                                     </li>
                                     <li>
                                         <div className="row" >
-                                            <div>Stauts</div>
-                                            <div>
+                                            <Typography>Status</Typography>
+                                            <Typography>
                                                 {product.countInStock > 0 
                                                 ? ( <span className="success">In Stock</span> )
                                                 : ( <span className="danger">Unavailable</span> )
                                                 }
-                                            </div>
+                                            </Typography>
                                         </div>
                                     </li>
                                     {
@@ -73,22 +84,27 @@ const ProductDetails = () => {
                                             <>
                                             <li>
                                                 <div className='row'>
-                                                    <div>Qty</div>
-                                                    <div>
-                                                        <select value={qty} onChange={e => setQty(e.target.value)}>
-                                                            {
+                                                    <Typography>Qty</Typography>
+                                                    <select value={qty}
+                                                    onChange={e => setQty(e.target.value)}>
+                                                        {
                                                                 [...Array(product.countInStock).keys()].map(
                                                                     (x) => (
-                                                                        <option key={x +1} value={x + 1}>{x + 1}</option>
+                                                                        <option key={x +1} value={x + 1}>
+                                                                            {x + 1}
+                                                                        </option>
                                                                     )
                                                                 )
                                                             }
-                                                        </select>
-                                                    </div>
+                                                    </select>
                                                 </div>
                                             </li>
                                                 <li>
-                                                    <button onClick={addToCartHandler} className="primary block">Add to Cart</button>
+                                                    <Button
+                                                    onClick={addToCartHandler} 
+                                                    fullWidth variant='contained' color='primary'>
+                                                        Add to Cart
+                                                    </Button>
                                                 </li>
                                             </>
                                         )

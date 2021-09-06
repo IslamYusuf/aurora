@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-    Button, CssBaseline, TextField, 
-    Grid, Typography, Container,
+    Button, TextField, Grid, Typography, Container,
 } from '@material-ui/core';
 
 import { updateUserProfile, userDetails } from '../../actions/userActions';
@@ -47,7 +46,7 @@ const UserProfile1 = () => {
     return (
         <Container component="main" maxWidth="xs">
             <div className={classes.paper}>
-            <Typography component="h1" variant="h5">
+            <Typography component="h1" variant="h5" gutterBottom>
                 User Profile
             </Typography>
             {

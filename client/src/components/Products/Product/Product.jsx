@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Card, CardMedia, CardContent, CardActions, Typography, IconButton } from '@material-ui/core';
+import { Card, CardContent, CardActions, Typography, IconButton } from '@material-ui/core';
 import { AddShoppingCart } from '@material-ui/icons';
 
 import useStyles from './styles';
@@ -23,7 +23,7 @@ const Product = ({product}) => {
                         </Typography>
                     </Link>
                     <Typography gutterBottom variant="h5" component="h2">
-                        ${product.price}
+                        Ksh{product.price}
                     </Typography>
                 </div>
                 <Rating rating={product.rating} reviews={product.numReviews} />

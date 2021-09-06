@@ -53,7 +53,7 @@ a{
   text-decoration: none;
 }
 a:hover{
-  color: #ff8000;
+  color: gold;
 }
 ul{
   padding: 0;
@@ -150,8 +150,8 @@ img.large{
 
 /* Header */
 .card{
-  border: 0.1rem #c0c0c0 solid;
-  background-color: #f8f8f8;
+  border: 0.1rem goldenrod solid;
+  background-color: whitesmoke;
   border-radius: 0.5rem;
   margin: 1rem;
 }
@@ -226,7 +226,7 @@ img.large{
   min-width: 12rem;
   padding: 1rem;
   z-index: 1;
-  background-color: #9b8506;
+  background-color: rgb(158, 40, 158);
   margin: 0;
   margin-top: 0.4rem;
   border-radius: 0.5rem;

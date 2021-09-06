@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     Table, TableBody, TableCell,TableHead, 
-    TableRow, Paper, TableContainer, Button,
+    TableRow, Paper, TableContainer, Button, ButtonGroup,
 } from '@material-ui/core';
 import { 
     withStyles, makeStyles  
@@ -34,6 +34,9 @@ root: {
 const useStyles = makeStyles({
     table: {
         minWidth: 700,
+    },
+    container:{
+        marginBottom: 25,
     },
 });
 
@@ -68,8 +71,8 @@ const OrderList = (props) => {
             {loading ? (<Loading></Loading>)
             : error ? (<Message variant="danger">{error}</Message>) 
             :(
-                <TableContainer component={Paper}>
-                <Table className={classes.table} aria-label="customized table">
+                <TableContainer component={Paper} className={classes.container}>
+                <Table className={classes.table} aria-label="customized table" size='small'>
                     <TableHead>
                         <TableRow>
                             <StyledTableCell>ID</StyledTableCell>
@@ -97,16 +100,19 @@ const OrderList = (props) => {
                                 : "No"}
                         </StyledTableCell>
                         <StyledTableCell align="right">
-                            <Button 
-                            color='primary' variant='outlined' 
-                            onClick={() => props.history.push(`/order/${order._id}`)}>
-                                Details
-                            </Button>
-                            <Button 
-                            color='secondary' variant='outlined' 
-                            onClick={() => deleteHandler(order)}>
-                                Delete
-                            </Button>
+                            <ButtonGroup variant="contained" disableFocusRipple 
+                            disableRipple size='small'>
+                                <Button 
+                                color='primary' size='small'
+                                onClick={() => props.history.push(`/order/${order._id}`)}>
+                                    Details
+                                </Button>
+                                <Button 
+                                color='secondary' size='small'
+                                onClick={() => deleteHandler(order)}>
+                                    Delete
+                                </Button>
+                            </ButtonGroup>
                         </StyledTableCell>
                         </StyledTableRow>
                     ))}

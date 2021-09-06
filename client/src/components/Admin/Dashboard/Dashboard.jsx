@@ -49,7 +49,7 @@ const Dashboard = () => {
                         </span>
                     </div>
                     <div className="summary-body">
-                        $
+                        Ksh
                         {summary.orders[0]
                         ? summary.orders[0].totalSales.toFixed(2)
                         : 0}
@@ -58,7 +58,6 @@ const Dashboard = () => {
                 </ul>
                 <div>
                     <div>
-                    <h2>Sales</h2>
                     {summary.dailyOrders.length === 0 
                     ? (<Message>No Sale</Message>)
                     : (
@@ -71,12 +70,16 @@ const Dashboard = () => {
                             ['Date', 'Sales'],
                             ...summary.dailyOrders.map((x) => [x._id, x.sales]),
                         ]}
+                        options={{
+                            title: 'Sales',
+                            // Just add this option
+                            //is3D: true,
+                        }}
                         ></Chart>
                     )}
                     </div>
                 </div>
                 <div>
-                    <h2>Categories</h2>
                     {summary.productCategories.length === 0 
                     ? (<Message>No Category</Message>)
                     : (
@@ -88,7 +91,12 @@ const Dashboard = () => {
                             data={[
                             ['Category', 'Products'],
                             ...summary.productCategories.map((x) => [x._id, x.count]),
-                            ]}
+                            ]}    
+                            options={{
+                                title: 'Categories',
+                                // Just add this option
+                                is3D: true,
+                            }}
                         />
                     )}
                 </div>

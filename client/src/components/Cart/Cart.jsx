@@ -4,10 +4,9 @@ import { useParams, useLocation, useHistory, Link} from 'react-router-dom';
 import { addToCart, removeFromCart, emptyCart} from '../../actions/cartActions';
 import { 
     Container, Typography, Button, 
-    Grid, Card, CardMedia,CardActions, CardContent 
+    Grid, Card, CardActions, CardContent 
 } from '@material-ui/core';
 
-import Message from '../Message';
 import useStyles from './styles';
 
 const Cart = () => {

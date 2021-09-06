@@ -1,4 +1,3 @@
-//import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {Link, useLocation, useHistory, useParams} from 'react-router-dom';
 import { AppBar, Toolbar, IconButton, Badge, Typography, Divider} from '@material-ui/core';
@@ -34,7 +33,7 @@ const NavbarBar = () => {
                 <div className={classes.baseline}>
                     <IconButton component={Link} to="/cart" aria-label="Cart" color="inherit">
                         <Badge badgeContent={cartItems.length} color="secondary">
-                            <ShoppingCart fontSize="large" />
+                            <ShoppingCart style={{ fontSize: 22 }}/>
                         </Badge>
                     </IconButton>
                     {
@@ -42,7 +41,7 @@ const NavbarBar = () => {
                         ? (
                             <div className='dropdown'>
                                 <Typography component={Link} to='#' variant='h4'>
-                                        <AccountCircle fontSize='large' />
+                                        <AccountCircle style={{ fontSize: 22 }}/>
                                 </Typography>
                                 <ul className='dropdown-content'>
                                     <li>
@@ -50,6 +49,8 @@ const NavbarBar = () => {
                                             {`${userInfo.firstName} ${userInfo.lastName}`}
                                         </Typography>
                                     </li>
+                                    <Divider/>
+                                    <Divider/>
                                     <Divider/>
                                     <li>
                                         <Typography align='center'component={Link} to='/profile' variant='h5'>
@@ -75,7 +76,7 @@ const NavbarBar = () => {
                         userInfo && userInfo.isAdmin && (
                             <div className='dropdown'>
                                 <Typography component={Link} to='#admin' variant='h4'>
-                                        <SupervisorAccount fontSize='large'/>
+                                        <SupervisorAccount style={{ fontSize: 22 }}/>
                                 </Typography>
                                 <div className='dropdown-content'>
                                     <ul>
@@ -84,6 +85,8 @@ const NavbarBar = () => {
                                                 Admin
                                             </Typography>
                                         </li>
+                                        <Divider/>
+                                        <Divider/>
                                         <Divider/>
                                         <li>
                                             <Typography variant='h5' component={Link} to='/dashboard'>
