@@ -32,14 +32,34 @@ const Order = () => {
 
         if (!stripe || !elements) return;
 
-        const cardElement = elements.getElement(CardElement);
+        /* const cardElement = elements.getElement(CardElement);
 
-        const { error, paymentMethod } = await stripe.createPaymentMethod({ type: 'card', card: cardElement });
+        const { error, paymentMethod } = await stripe.createPaymentMethod({ 
+            type: 'card', 
+            card: cardElement,
+        }); */
 
-        if (error) {
+        const result = await stripe.confirmCardPayment(order.clientSecret, {
+            payment_method: {
+              card: elements.getElement(CardElement),
+              billing_details: {
+                name: `${order.user.firstName} ${order.user.lastName}`,
+                email: order.user.email,
+              },
+            }
+        });
+        
+        if (result.error) {
             console.log('[error]', error);
         } else {
-            dispatch(payOrder(order, paymentMethod));
+            if (result.paymentIntent.status === 'succeeded') {
+                // Show a success message to your customer
+                // There's a risk of the customer closing the window before callback
+                // execution. Set up a webhook or plugin to listen for the
+                // payment_intent.succeeded event that handles any business critical
+                // post-payment actions.
+                dispatch(payOrder(order, result.paymentIntent));
+              }
         }
     };
 
@@ -104,7 +124,7 @@ const Order = () => {
                                                         <Link to={`/product/${item.product}`} >{item.name}</Link>
                                                     </div>
                                 
-                                                    <div>{item.qty} x ${item.price} = ${item.qty * item.price}</div>
+                                                    <div>{item.qty} x Ksh{item.price} = Ksh{item.qty * item.price}</div>
                                                     
                                                 </div>
                                             </li>
@@ -124,19 +144,19 @@ const Order = () => {
                             <li>
                                 <div className='row'>
                                     <div>Items</div>
-                                    <div>${order.itemsPrice.toFixed(2)}</div>
+                                    <div>Ksh{order.itemsPrice.toFixed(2)}</div>
                                 </div>
                             </li>
                             <li>
                                 <div className='row'>
                                     <div>Shipping</div>
-                                    <div>${order.shippingPrice.toFixed(2)}</div>
+                                    <div>Ksh{order.shippingPrice.toFixed(2)}</div>
                                 </div>
                             </li>
                             <li>
                                 <div className='row'>
                                     <div>Tax</div>
-                                    <div>${order.taxPrice.toFixed(2)}</div>
+                                    <div>Ksh{order.taxPrice.toFixed(2)}</div>
                                 </div>
                             </li>
                             <li>
@@ -145,7 +165,7 @@ const Order = () => {
                                         <strong>Order Total</strong>
                                     </div>
                                     <div>
-                                        <strong>${order.totalPrice.toFixed(2)}</strong>
+                                        <strong>Ksh{order.totalPrice.toFixed(2)}</strong>
                                     </div>
                                 </div>
                             </li>
@@ -182,13 +202,14 @@ const Order = () => {
                                     {errorDeliver && (
                                         <Message variant="danger">{errorDeliver}</Message>
                                     )}
-                                    <button
-                                        type="button"
-                                        className="primary block"
+                                    <Button 
+                                        variant="contained" color="primary"
                                         onClick={deliverHandler}
+                                        size="large" type="button"
                                     >
                                         Deliver Order
-                                    </button>
+                                    </Button> 
+                                    
                                 </li>
                             )}
                         </ul>

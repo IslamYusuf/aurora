@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema({
     password: {type: String, required: true},
     isAdmin: {type: Boolean, default: false, required: true},
     cartItems: {type:Array, default:[], required:true},
+    hasStripeAccount:{type: Boolean, default: false, required: true}
 },{
     timestamps: true,
 });

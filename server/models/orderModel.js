@@ -35,6 +35,7 @@ const orderSchema = new mongoose.Schema({
     paidAt: {type: Date},
     isDelivered: {type: Boolean, default: false},
     delieverdAt: {type: Date },
+    clientSecret: {type: String},
 },
 {
     timestamps: true,

@@ -1,10 +1,13 @@
 import express from 'express';
 import expressAsyncHandler from 'express-async-handler';
+import Stripe from 'stripe';
+
 import Order from '../models/orderModel.js';
 import User from '../models/userModel.js';
 import Product from '../models/productModels.js';
 import { isAuth, isAdmin } from '../utils.js';
 
+const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 const orderRouter = express.Router();
 
 orderRouter.get('/summary',isAuth,isAdmin,
@@ -61,6 +64,50 @@ orderRouter.post(
     if(!req.body.orderItems.length){
         res.status(404).send({message: 'Cart is Empty'});
     } else {
+      //const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
+      let customer
+      const user = await User.findById(req.user._id);
+      if(!user.hasStripeAccount){
+        customer = await stripe.customers.create({
+          description: 'My First Test Customer (created for API docs)',
+          name: `${user.firstName} ${user.lastName}`,
+          email: user.email,
+          address: {
+            city: req.body.shippingAddress.city,
+            country: req.body.shippingAddress.country,
+            postal_code: req.body.shippingAddress.postalCode,
+          },
+          shipping:{
+            address: {
+              city: req.body.shippingAddress.city,
+              country: req.body.shippingAddress.country,
+              postal_code: req.body.shippingAddress.postalCode,
+            },
+            name: `${user.firstName} ${user.lastName}`, 
+          },
+        },
+        {
+          apiKey: process.env.STRIPE_SECRET_KEY,
+        });
+
+        user.hasStripeAccount = true;
+        await user.save();
+      }
+
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: `${req.body.totalPrice * 100}`,
+        currency: 'kes',
+        customer: customer.id,
+        //customer: req.body.shippingAddress.fullName,
+        // Verify your integration in this guide by including this parameter
+        metadata: {integration_check: 'accept_a_payment'},
+      },
+      {
+        apiKey: process.env.STRIPE_SECRET_KEY,
+      });
+      
+
         const order = new Order({
             orderItems: req.body.orderItems,
             shippingAddress: req.body.shippingAddress,
@@ -69,11 +116,12 @@ orderRouter.post(
             shippingPrice: req.body.shippingPrice,
             taxPrice: req.body.taxPrice,
             totalPrice: req.body.totalPrice,
-            user: req.user._id
+            user: req.user._id,
+            clientSecret: paymentIntent.client_secret,
         });
 
         const createdOrder = await order.save();
-        res.status(201).send({message: 'New Order Created', order: createdOrder});
+        res.status(201).send({message: 'New Order Created', order: createdOrder, paymentIntent});
     }
 }));
 
