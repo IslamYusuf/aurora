@@ -7,7 +7,7 @@ import productRouter from './routers/productRouter.js';
 import userRouter from './routers/userRouter.js';
 import orderRouter from './routers/orderRouter.js';
 import uploadRouter from './routers/uploadRouter.js';
-import mpesaRouter from './routers/mpesaRouter.js';
+import paymentRouter from './routers/paymentRouter.js';
 
 dotenv.config();
 
@@ -27,7 +27,7 @@ app.use('/api/users', userRouter);
 app.use('/api/products', productRouter);
 app.use('/api/orders', orderRouter);
 app.use('/api/uploads', uploadRouter);
-app.use('/api/mpesa', mpesaRouter);
+app.use('/api/payment', paymentRouter)
 app.get('/', (req, res) =>{
     res.send('Server is running')
 })

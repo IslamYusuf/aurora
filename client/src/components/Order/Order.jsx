@@ -1,22 +1,33 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
-import { Typography, Button, Divider } from '@material-ui/core';
+import { Typography, Button, Divider} from '@material-ui/core';
 import { Elements, CardElement, ElementsConsumer } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
+import PhoneInput, { formatPhoneNumber, formatPhoneNumberIntl,
+    isValidPhoneNumber, isPossiblePhoneNumber } from 'react-phone-number-input';
+import 'react-phone-number-input/style.css'
 
 import { deliverOrder, detailsOrder, payOrder } from '../../actions/orderActions';
 import { ORDER_DELIVER_RESET, ORDER_PAY_RESET } from '../../constants/orderConstants';
 import Loading from '../Loading';
 import Message from '../Message';
+import { confirmMpesaOrderPayment, initiateMpesaPayment, payOrderStripe } from '../../actions/paymentActions';
 
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY);
 
 const Order = () => {
+    const [mpesaPhoneNumber, setMpesaPhoneNumber] = useState()
     const dispatch = useDispatch();
     const {id} = useParams();
     const {order, loading, error } = useSelector(state => state.orderDetails);
-    const {success:successPay, error: errorPay, loading: loadingPay} = useSelector(state => state.orderPayment);
+    const {
+        success:successPay,
+        error: errorPay,
+        loading: loadingPay, 
+        message: messagePay,
+        pending: pendingPay,
+    } = useSelector(state => state.orderPayment);
     const {
         loading: loadingDeliver,
         error: errorDeliver,
@@ -27,19 +38,25 @@ const Order = () => {
     const deliverHandler = () => {
         dispatch(deliverOrder(order._id));
     };
-    const handleSubmit = async (e, elements, stripe) => {
+
+    const mpesaPaymentHandler = (e) =>{
+        e.preventDefault();
+
+        const intlFormat = formatPhoneNumberIntl(mpesaPhoneNumber)
+        dispatch(initiateMpesaPayment(order, intlFormat.substring(1)));
+    }
+
+    const confirmMpesaPaymentHandler = () =>{
+        //Todo: dispatch an action to get the details of the order
+        dispatch(confirmMpesaOrderPayment(order))
+    }
+
+    const handleStripePayment = async (e, elements, stripe) => {
         e.preventDefault();
 
         if (!stripe || !elements) return;
 
-        /* const cardElement = elements.getElement(CardElement);
-
-        const { error, paymentMethod } = await stripe.createPaymentMethod({ 
-            type: 'card', 
-            card: cardElement,
-        }); */
-
-        const result = await stripe.confirmCardPayment(order.clientSecret, {
+        const result = await stripe.confirmCardPayment(order.stripeInfo.clientSecret, {
             payment_method: {
               card: elements.getElement(CardElement),
               billing_details: {
@@ -50,7 +67,7 @@ const Order = () => {
         });
         
         if (result.error) {
-            console.log('[error]', error);
+            console.log('[error]', result.error);
         } else {
             if (result.paymentIntent.status === 'succeeded') {
                 // Show a success message to your customer
@@ -58,18 +75,18 @@ const Order = () => {
                 // execution. Set up a webhook or plugin to listen for the
                 // payment_intent.succeeded event that handles any business critical
                 // post-payment actions.
-                dispatch(payOrder(order, result.paymentIntent));
+                dispatch(payOrderStripe(order, result.paymentIntent));
               }
         }
     };
 
     useEffect(() => {
-        if (!order || successPay || successDeliver || (order && order._id !== id)){
+        if (!order || successPay || successDeliver || pendingPay || (order && order._id !== id)){
             dispatch({ type: ORDER_PAY_RESET });
             dispatch({ type: ORDER_DELIVER_RESET });
             dispatch(detailsOrder(id));
           } 
-    }, [dispatch, id, order, successDeliver, successPay])
+    }, [dispatch, id, order, successDeliver, successPay, pendingPay])
  
     return loading ? (<Loading />) 
     : error ? (<Message variant='danger' >{error}</Message>)
@@ -169,7 +186,7 @@ const Order = () => {
                                     </div>
                                 </div>
                             </li>
-                            {!order.isPaid && (
+                            {!order.isPaid && order.paymentMethod === 'Stripe' ? (
                                 <li>
                                     {!stripePromise ? (<Loading></Loading>) 
                                     : (
@@ -180,7 +197,7 @@ const Order = () => {
                                         <Typography variant="h6" gutterBottom style={{ margin: '20px 0' }}>Payment method</Typography>
                                         <Elements stripe={stripePromise}>
                                             <ElementsConsumer>{({ elements, stripe }) => (
-                                                <form onSubmit={(e) => handleSubmit(e, elements, stripe)}>
+                                                <form onSubmit={(e) => handleStripePayment(e, elements, stripe)}>
                                                     <CardElement />
                                                     <br /> <br />
                                                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -194,6 +211,47 @@ const Order = () => {
                                         </Elements>
                                         </>
                                     )}
+                                </li>
+                            ) : !order.isPaid && (
+                                <li>
+                                    {errorPay && (<Message variant="danger">{errorPay}</Message>)}
+                                    {loadingPay && <Loading></Loading>}
+                                    {messagePay && (<Message variant="success">
+                                        {`${messagePay} Click on the 'CONFIRM PAYMENT' button below after paying using Mpesa.`}
+                                    </Message>)}
+                                    <Divider/>
+                                    <Typography variant="h5" gutterBottom style={{ margin: '20px 0' }}>Mpesa Payment </Typography>
+                                    {!loading && pendingPay 
+                                        ? (
+                                            <Button variant="contained" color="primary"
+                                                onClick={() => confirmMpesaPaymentHandler()}>
+                                                    CONFIRM PAYMENT
+                                            </Button>
+                                        )
+                                        : !order.isPaid && (
+                                            <form onSubmit={(e) => mpesaPaymentHandler(e)}>
+                                                <PhoneInput
+                                                    placeholder="Enter Mpesa phone number"
+                                                    //countrySelectProps={{ unicodeFlags: true }}
+                                                    defaultCountry='KE'
+                                                    value={mpesaPhoneNumber}
+                                                    onChange={setMpesaPhoneNumber}
+                                                />
+                                                <br /> <br />
+                                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                                    <Button type="submit" variant="contained"
+                                                    disabled={mpesaPhoneNumber ? !isValidPhoneNumber(mpesaPhoneNumber) : true}
+                                                    color="primary">
+                                                        Pay Ksh{order.totalPrice.toFixed(2)}
+                                                    </Button>
+                                                </div>
+                                            </form>
+                                        ) 
+                                        }
+                                        {/* Is possible: {mpesaPhoneNumber && isPossiblePhoneNumber(mpesaPhoneNumber) ? 'true' : 'false'}
+                                        Is valid: {mpesaPhoneNumber && isValidPhoneNumber(mpesaPhoneNumber) ? 'true' : 'false'}
+                                        National: {mpesaPhoneNumber && formatPhoneNumber(mpesaPhoneNumber)}
+                                        International: {mpesaPhoneNumber && formatPhoneNumberIntl(mpesaPhoneNumber)} */} 
                                 </li>
                             )}
                             {userInfo.isAdmin && order.isPaid && !order.isDelivered && (

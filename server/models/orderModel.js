@@ -25,6 +25,7 @@ const orderSchema = new mongoose.Schema({
         status: String,
         updateTime: String,
         emailAddress: String,
+        mpesaPhoneNumber: String,
     },
     itemsPrice: {type: Number, required: true},
     shippingPrice: {type: Number, required: true},
@@ -35,7 +36,17 @@ const orderSchema = new mongoose.Schema({
     paidAt: {type: Date},
     isDelivered: {type: Boolean, default: false},
     delieverdAt: {type: Date },
-    clientSecret: {type: String},
+    mpesaMerchantRequestId: {type: String},
+    stripeInfo:{
+        customerId: String,
+        clientSecret: String,
+    },
+    mpesaInfo: {
+        mpesaPhoneNumber: Number,
+        mpesaMerchantRequestId: String,
+        mpesaCustomerMessage: String,
+        isPayInProgress: Boolean,
+    },
 },
 {
     timestamps: true,

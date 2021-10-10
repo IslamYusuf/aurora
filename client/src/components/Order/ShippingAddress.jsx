@@ -101,7 +101,7 @@ const ShippingAddress = () => {
                             <FormLabel component="legend">Payment Method</FormLabel>
                             <RadioGroup aria-label="payment" name="payment" value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)}>
                                 <FormControlLabel value="Stripe" control={<Radio />} label="Stripe" />
-                                <FormControlLabel value="Paypal" control={<Radio />} label="Paypal" />
+                                <FormControlLabel value="Mpesa" control={<Radio />} label="Mpesa" />
                             </RadioGroup>
                         </FormControl>
                         <Button

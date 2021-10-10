@@ -64,50 +64,47 @@ orderRouter.post(
     if(!req.body.orderItems.length){
         res.status(404).send({message: 'Cart is Empty'});
     } else {
-      //const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-
-      let customer
-      const user = await User.findById(req.user._id);
-      if(!user.hasStripeAccount){
-        customer = await stripe.customers.create({
-          description: 'My First Test Customer (created for API docs)',
-          name: `${user.firstName} ${user.lastName}`,
-          email: user.email,
-          address: {
-            city: req.body.shippingAddress.city,
-            country: req.body.shippingAddress.country,
-            postal_code: req.body.shippingAddress.postalCode,
-          },
-          shipping:{
+      if(req.body.paymentMethod === 'Stripe'){
+        const user = await User.findById(req.user._id);
+        if(!user.stripeInfo.hasStripeAccount){
+          const customer = await stripe.customers.create({
+            description: 'My First Test Customer (created for API docs)',
+            name: `${user.firstName} ${user.lastName}`,
+            email: user.email,
             address: {
               city: req.body.shippingAddress.city,
               country: req.body.shippingAddress.country,
               postal_code: req.body.shippingAddress.postalCode,
             },
-            name: `${user.firstName} ${user.lastName}`, 
+            shipping:{
+              address: {
+                city: req.body.shippingAddress.city,
+                country: req.body.shippingAddress.country,
+                postal_code: req.body.shippingAddress.postalCode,
+              },
+              name: `${user.firstName} ${user.lastName}`, 
+            },
           },
+          {
+            apiKey: process.env.STRIPE_SECRET_KEY,
+          });
+
+          user.stripeInfo.hasStripeAccount = true;
+          user.stripeInfo.customerId = customer.id;
+          await user.save();
+        }
+
+        const paymentIntent = await stripe.paymentIntents.create({
+          amount: `${req.body.totalPrice * 100}`,
+          currency: 'kes',
+          customer: user.stripeInfo.customerId,
+          // Verify your integration in this guide by including this parameter
+          metadata: {integration_check: 'accept_a_payment'},
         },
         {
           apiKey: process.env.STRIPE_SECRET_KEY,
         });
-
-        user.hasStripeAccount = true;
-        await user.save();
-      }
-
-      const paymentIntent = await stripe.paymentIntents.create({
-        amount: `${req.body.totalPrice * 100}`,
-        currency: 'kes',
-        customer: customer.id,
-        //customer: req.body.shippingAddress.fullName,
-        // Verify your integration in this guide by including this parameter
-        metadata: {integration_check: 'accept_a_payment'},
-      },
-      {
-        apiKey: process.env.STRIPE_SECRET_KEY,
-      });
-      
-
+        
         const order = new Order({
             orderItems: req.body.orderItems,
             shippingAddress: req.body.shippingAddress,
@@ -117,11 +114,30 @@ orderRouter.post(
             taxPrice: req.body.taxPrice,
             totalPrice: req.body.totalPrice,
             user: req.user._id,
-            clientSecret: paymentIntent.client_secret,
+            stripeInfo: {
+              clientSecret: paymentIntent.client_secret
+            },
+            //clientSecret: paymentIntent.client_secret,
         });
 
         const createdOrder = await order.save();
         res.status(201).send({message: 'New Order Created', order: createdOrder, paymentIntent});
+      } else{
+        //Todo: Implement payment using mpesa
+        const order = new Order({
+          orderItems: req.body.orderItems,
+          shippingAddress: req.body.shippingAddress,
+          paymentMethod: req.body.paymentMethod,
+          itemsPrice: req.body.itemsPrice,
+          shippingPrice: req.body.shippingPrice,
+          taxPrice: req.body.taxPrice,
+          totalPrice: req.body.totalPrice,
+          user: req.user._id,
+        });
+
+        const createdOrder = await order.save();
+        res.status(201).send({message: 'New Order Created', order: createdOrder,});
+      }
     }
 }));
 

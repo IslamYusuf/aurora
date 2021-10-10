@@ -1,19 +1,15 @@
 import {createStore, compose, applyMiddleware, combineReducers} from 'redux';
 import thunk from 'redux-thunk';
 
-
 import { 
     products, product, productCreate,
     productDelete, productUpdate, 
 } from './reducers/productReducers';
 import { cart } from './reducers/cartReducers';
-
-
 import {
     user, userDetails, updatedUserProfile,
     userDelete, userList, userUpdate
 } from './reducers/userReducers';
-
 import { order,orderDetails,orderPayment,
     orderList, orderDelete, orderSummary, orderDeliver,
 } from './reducers/orderReducers';
