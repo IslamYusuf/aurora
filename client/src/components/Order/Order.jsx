@@ -39,11 +39,10 @@ const Order = () => {
         dispatch(deliverOrder(order._id));
     };
 
-    const mpesaPaymentHandler = (e) =>{
-        e.preventDefault();
-
+    const mpesaPaymentHandler = () =>{
         const intlFormat = formatPhoneNumberIntl(mpesaPhoneNumber)
-        dispatch(initiateMpesaPayment(order, intlFormat.substring(1)));
+        const formatedPhoneNumber = intlFormat.substring(1).split(' ').join('')
+        dispatch(initiateMpesaPayment(order, formatedPhoneNumber));
     }
 
     const confirmMpesaPaymentHandler = () =>{
@@ -81,12 +80,12 @@ const Order = () => {
     };
 
     useEffect(() => {
-        if (!order || successPay || successDeliver || pendingPay || (order && order._id !== id)){
+        if (!order || successPay || successDeliver || (order && order._id !== id)){
             dispatch({ type: ORDER_PAY_RESET });
             dispatch({ type: ORDER_DELIVER_RESET });
             dispatch(detailsOrder(id));
           } 
-    }, [dispatch, id, order, successDeliver, successPay, pendingPay])
+    }, [dispatch, id, order, successDeliver, successPay,])
  
     return loading ? (<Loading />) 
     : error ? (<Message variant='danger' >{error}</Message>)
@@ -221,15 +220,15 @@ const Order = () => {
                                     </Message>)}
                                     <Divider/>
                                     <Typography variant="h5" gutterBottom style={{ margin: '20px 0' }}>Mpesa Payment </Typography>
-                                    {!loading && pendingPay 
+                                    {pendingPay 
                                         ? (
                                             <Button variant="contained" color="primary"
                                                 onClick={() => confirmMpesaPaymentHandler()}>
                                                     CONFIRM PAYMENT
                                             </Button>
                                         )
-                                        : !order.isPaid && (
-                                            <form onSubmit={(e) => mpesaPaymentHandler(e)}>
+                                        : (!order.isPaid && !loadingPay) && (
+                                            <>
                                                 <PhoneInput
                                                     placeholder="Enter Mpesa phone number"
                                                     //countrySelectProps={{ unicodeFlags: true }}
@@ -239,13 +238,14 @@ const Order = () => {
                                                 />
                                                 <br /> <br />
                                                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                                    <Button type="submit" variant="contained"
+                                                    <Button onClick={mpesaPaymentHandler}  variant="contained"
                                                     disabled={mpesaPhoneNumber ? !isValidPhoneNumber(mpesaPhoneNumber) : true}
                                                     color="primary">
                                                         Pay Ksh{order.totalPrice.toFixed(2)}
                                                     </Button>
                                                 </div>
-                                            </form>
+                                            </>
+                                            
                                         ) 
                                         }
                                         {/* Is possible: {mpesaPhoneNumber && isPossiblePhoneNumber(mpesaPhoneNumber) ? 'true' : 'false'}

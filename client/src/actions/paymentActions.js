@@ -28,7 +28,7 @@ export const payOrderStripe = (order, paymentIntent) => async  (dispatch, getSta
     }
 }
 
-export const payOrderMpesa = (order, mpesaPhoneNumber) => async  (dispatch, getState) => {
+/* export const payOrderMpesa = (order, mpesaPhoneNumber) => async  (dispatch, getState) => {
     dispatch({type: ORDER_PAY_REQUEST, payload: {order, mpesaPhoneNumber}});
     const {user : {userInfo},} = getState();
     try {
@@ -49,7 +49,7 @@ export const payOrderMpesa = (order, mpesaPhoneNumber) => async  (dispatch, getS
 
         dispatch({type: ORDER_DETAILS_FAIL, payload: message});
     }
-}
+} */
 
 export const initiateMpesaPayment = (order, mpesaPhoneNumber) => async (dispatch, getState) =>{
     dispatch({type: ORDER_PAY_REQUEST, payload: {order, mpesaPhoneNumber}});
@@ -57,14 +57,15 @@ export const initiateMpesaPayment = (order, mpesaPhoneNumber) => async (dispatch
     const {user : {userInfo},} = getState();
 
     try {
+        console.log(`inside initiate mpesa`)
         const {data} = await Axios.post(`/api/payment/mpesa/${order._id}/pay`, mpesaPhoneNumber, {
             headers :{
                 Authorization: `Bearer ${userInfo.token}`
             },
         });
+        console.log('after response from initiate mpesa')
         dispatch({type:ORDER_PAY_IN_PROGRESS, payload: data})
-        //dispatch({type: ORDER_DETAILS_SUCCESS, payload: data})
-
+        
     } catch (error) {
         const message = error.response && error.response.data.message
         ? error.response.data.message
@@ -75,7 +76,8 @@ export const initiateMpesaPayment = (order, mpesaPhoneNumber) => async (dispatch
 }
 
 export const confirmMpesaOrderPayment = (order) => async (dispatch, getState) => {
-    dispatch({type: CONFIRM_MPESA_PAY_REQUEST, payload: {order}});
+    //Todo: add a reducer for the below action
+    //dispatch({type: CONFIRM_MPESA_PAY_REQUEST, payload: {order}});
     const {user : {userInfo},} = getState();
 
     try {
@@ -84,20 +86,24 @@ export const confirmMpesaOrderPayment = (order) => async (dispatch, getState) =>
                 Authorization: `Bearer ${userInfo.token}`
             },
         });
+        console.log('inside confirmMpesaOrderPayment')
+        console.log(data.paymentResult.status)
+        console.log(data.mpesaInfo.isPayInProgress)
         
-        if(data.paymentResult.status){ //Alternatively - .id
-            dispatch({type: ORDER_PAY_SUCCESS, payload: data})
-        }else if(data.mpesaInfo.isPayInProgress){
+        if(data.mpesaInfo.isPayInProgress){ //Alternatively - .id
             dispatch({type:ORDER_PAY_IN_PROGRESS, payload: data})
-        } 
-        else{
-            dispatch({type: ORDER_PAY_FAIL, payload: data})
+        } else{
+            if(data.paymentResult.status){
+                dispatch({type: ORDER_PAY_SUCCESS, payload: data})
+            } else{
+                dispatch({type: ORDER_PAY_FAIL, payload: data})
+            }
         }
     } catch (error) {
         const message = error.response && error.response.data.message
         ? error.response.data.message
         : error.message;
-
+        console.log(`error occured: ${error}`)
         dispatch({type: ORDER_DETAILS_FAIL, payload: message});
     }
 }

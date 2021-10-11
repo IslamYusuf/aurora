@@ -8,7 +8,7 @@ import Product from '../models/productModels.js';
 import { isAuth, isAdmin } from '../utils.js';
 
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
-const orderRouter = express.Router();
+const orderRouter = express.Router()
 
 orderRouter.get('/summary',isAuth,isAdmin,
     expressAsyncHandler(async (req, res) => {

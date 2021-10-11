@@ -7,14 +7,16 @@ import User from '../models/userModel.js'
 
 const paymentRouter = express.Router();
 
-paymentRouter.post('/mpesa/:id/pay', 
+paymentRouter.post('/mpesa/:id/pay',
     isAuth,
     verifyOrder,
     getMpesaAccessToken,
     initiateStk,
     expressAsyncHandler(async (req, res)=>{
-        if(req.mpesaResponseCode === 0){
-            //TODO: save the 'MerchantRequestID' in the Order that made the payment request
+        console.log(`sent an stkpush`)
+        console.log(req.mpesaResponseCode)
+        if(req.mpesaResponseCode == 0){
+            console.log('Inside stkpush response')
             //const order = await Order.findById(req.params.id)
             req.order.mpesaInfo.mpesaMerchantRequestId = req.mpesaMerchantRequestId;
             req.order.mpesaInfo.mpesaCustomerMessage = req.mpesaCustomerMessage;
@@ -24,48 +26,52 @@ paymentRouter.post('/mpesa/:id/pay',
 
             res.status(200).send(updatedOrder)
         } else {
+            console.log('Stk response failed')
             res.status(404).send({message: req.mpesaResponseDescription});
         }
-    })    
+    })
 )
 
-paymentRouter.post('/mpesa/callback', expressAsyncHandler(async (req,_) =>{
-    if(req.body.ResultCode === 0){
-        const order = await Order.find({
-            mpesaInfo: {
-                mpesaMerchantRequestId: req.body.MerchantRequestID,
-            },
-        });
+paymentRouter.post('/mpesa/callback', expressAsyncHandler(async (req,res) =>{
+    console.log('Inside mpesa callback')
+    const result = req.body.Body;
+
+    if(result.stkCallback.ResultCode === 0){
+        const orderResult = await Order.find({"mpesaInfo.mpesaMerchantRequestId" : `${result.stkCallback.MerchantRequestID}`})
+        const order = orderResult[0]
+
         if(order){
-            const user = User.findById(order.user);
+            const user = await User.findById(order.user);
+            const callbackMetadataArray = result.CallbackMetadata.Item; 
+            const resultInfo = callbackMetadataArray.filter(item => item.Name === 'MpesaReceiptNumber')
+            const mpesaReceiptNumber = resultInfo[0]
+            console.log(mpesaReceiptNumber);
 
             order.isPaid = true
-            order.paidAt = req.body.TransactionDate || Date.now()
+            order.paidAt = Date.now();
             order.paymentResult = {
-                id: req.body.MpesaReceiptNumber,
+                id: mpesaReceiptNumber.value,
                 status: true,
-                updateTime: req.body.TransactionDate,
-                emailAddress: user && user.email, //Todo: Fix email address
+                updateTime: Date.now(),
+                emailAddress: user && user.email,
             }
             order.mpesaInfo.isPayInProgress = false;
 
             const updatedOrder = await order.save();
             console.log(updatedOrder);
         }
+
     } else {
-        const order = await Order.find({
-            mpesaInfo: {
-                mpesaMerchantRequestId: req.body.MerchantRequestID,
-            },
-        });
+        const orderResult = await Order.find({"mpesaInfo.mpesaMerchantRequestId" : `${result.stkCallback.MerchantRequestID}`})
+        const order = orderResult[0]
+
         if(order){
             order.paymentResult = {status: false,}
-            order.mpesaInfo.isPayInProgress = false;
-            const updatedOrder = await order.save();
+            order.mpesaInfo = {isPayInProgress: false,}
 
-            console.log(updatedOrder);
+            const updatedOrder = await order.save();
+            console.log(`Mpesa Payment Failed. ${updatedOrder}`)
         }
-        console.log("Mpesa Payment failed.")
     }
 }))
 

@@ -1,8 +1,12 @@
 import jwt from 'jsonwebtoken';
 import axios from 'axios';
 import datetime from 'node-datetime';
+import ngrok from 'ngrok';
 
 import Order from './models/orderModel.js';
+
+/* const url = await ngrok.connect({authtoken: process.env.NGROK_AUTH_TOKEN, addr: 5000,});
+console.log(url) */
 
 export const generateToken = (user) =>{
     return jwt.sign({
@@ -38,20 +42,21 @@ export const isAdmin = (req, res, next) => {
     }
 }
 
-export const verifyOrder = (req, res, next) => async() =>{
-    try {
-        const order = await Order.findById(req.params.id);
-        if(order){
-            req.order = order;
-            next();
-        } 
-    } catch (e) {
+export const verifyOrder = async (req, res, next) =>{
+    console.log(`inside order verification`)
+    const order = await Order.findById(req.params.id);
+    if(order){
+        req.order = order;
+        console.log(`order is verified`)
+        next();
+    } else {
         res.status(401).send({ message: 'Order Not Found'})
     }
 }
 
-export const getMpesaAccessToken = (req, res, next) => async() =>{
+export const getMpesaAccessToken = async (req, res, next) =>{
     try {
+        console.log(`getting mpesa token`)
         const {data} = await axios.get(process.env.OAUTH_TOKEN_URL,{
             headers:{
                 Authorization: `Basic ${process.env.OAUTH_TOKEN}`,
@@ -65,9 +70,11 @@ export const getMpesaAccessToken = (req, res, next) => async() =>{
     }
 }
 
-export const initiateStk = (req,res,next) => async () => {
+export const initiateStk = async (req,res,next) =>{
     try {
-        const timestamp = datetime.create().format('YYYYmmddHHMMSS')
+        console.log(`initiating stk`)
+        const ngrokUrl = await ngrok.connect({authtoken: process.env.NGROK_AUTH_TOKEN, addr: 5000,});
+        const timestamp = datetime.create().format('YmdHMS')
         const password = Buffer.from(`${process.env.SHORT_CODE}${process.env.PASS_KEY}${timestamp}`).toString('base64')
         
         const body = JSON.stringify({
@@ -79,7 +86,7 @@ export const initiateStk = (req,res,next) => async () => {
           PartyA: req.body.mpesaPhoneNumber || process.env.PHONE_NUMBER,
           PartyB: process.env.SHORT_CODE,
           PhoneNumber: req.body.mpesaPhoneNumber || process.env.PHONE_NUMBER,
-          CallBackURL: process.env.MPESA_CALLBACK_URL || '', //TODO: Need to set up a callback url
+          CallBackURL: `${ngrokUrl}/api/payment/mpesa/callback`, //TODO: Need to set up a callback url
           AccountReference: 'Aurora E-Commerce Company',
           TransactionDesc: 'Payment for goods purchased',
         });
@@ -96,8 +103,9 @@ export const initiateStk = (req,res,next) => async () => {
         req.mpesaResponseCode = data.ResponseCode;
         req.mpesaCustomerMessage = data.CustomerMessage;
         req.mpesaResponseDescription = data.ResponseDescription;
+        console.log('stk sent')
         next()
       } catch (e) {
-        res.status(401).send({message: 'Mpesa stkPush payment Failed'});
+        res.status(401).send({message: `Mpesa stkPush payment Failed. Error:${e}`, });
       }
 }
