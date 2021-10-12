@@ -67,7 +67,10 @@ paymentRouter.post('/mpesa/callback', expressAsyncHandler(async (req,res) =>{
 
         if(order){
             order.paymentResult = {status: false,}
-            order.mpesaInfo = {isPayInProgress: false,}
+            order.mpesaInfo = {
+                isPayInProgress: false,
+                mpesaCustomerMessage:result.stkCallback.ResultDesc, 
+            }
 
             const updatedOrder = await order.save();
             console.log(`Mpesa Payment Failed. ${updatedOrder}`)

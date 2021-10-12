@@ -9,7 +9,7 @@ import {
     ORDER_DELIVER_RESET,ORDER_SUMMARY_REQUEST,ORDER_SUMMARY_SUCCESS,
     ORDER_SUMMARY_FAIL, ORDER_PAY_IN_PROGRESS,
 } from "../constants/orderConstants";
-import { CONFIRM_MPESA_PAY_REQUEST } from "../constants/paymentConstants";
+import { CONFIRM_MPESA_PAYMENT } from "../constants/paymentConstants";
 
 export const order = (state={}, action) => {
     switch (action.type) {
@@ -43,8 +43,8 @@ export const orderPayment = (state={}, action) => {
             return {loading: true}
         case ORDER_PAY_IN_PROGRESS:
             return {loading: false, pending: true, message: action.payload.mpesaInfo.mpesaCustomerMessage}
-        case CONFIRM_MPESA_PAY_REQUEST:
-            return {loading: true, pending: true,}//message: action.payload.mpesaInfo.mpesaCustomerMessage
+        case CONFIRM_MPESA_PAYMENT:
+            return {loading: true, pending: true,}
         case ORDER_PAY_SUCCESS:
             return {loading: false, success: true, pending: false}
         case ORDER_PAY_FAIL:

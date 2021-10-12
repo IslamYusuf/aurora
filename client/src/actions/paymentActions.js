@@ -7,7 +7,7 @@ import {
     ORDER_PAY_IN_PROGRESS,
     ORDER_PAY_REQUEST,ORDER_PAY_SUCCESS,
 } from "../constants/orderConstants";
-import {CONFIRM_MPESA_PAY_REQUEST,} from "../constants/paymentConstants";
+import {CONFIRM_MPESA_PAYMENT,} from "../constants/paymentConstants";
 
 export const payOrderStripe = (order, paymentIntent) => async  (dispatch, getState) => {
     dispatch({type: ORDER_PAY_REQUEST, payload: {order, paymentIntent}});
@@ -58,7 +58,7 @@ export const initiateMpesaPayment = (order, mpesaPhoneNumber) => async (dispatch
 
     try {
         console.log(`inside initiate mpesa`)
-        const {data} = await Axios.post(`/api/payment/mpesa/${order._id}/pay`, mpesaPhoneNumber, {
+        const {data} = await Axios.post(`/api/payment/mpesa/${order._id}/pay`, {mpesaPhoneNumber}, {
             headers :{
                 Authorization: `Bearer ${userInfo.token}`
             },
@@ -71,13 +71,13 @@ export const initiateMpesaPayment = (order, mpesaPhoneNumber) => async (dispatch
         ? error.response.data.message
         : error.message;
 
-        dispatch({type: ORDER_DETAILS_FAIL, payload: message});
+        dispatch({type: ORDER_PAY_FAIL, payload: message});
     }
 }
 
 export const confirmMpesaOrderPayment = (order) => async (dispatch, getState) => {
     //Todo: add a reducer for the below action
-    //dispatch({type: CONFIRM_MPESA_PAY_REQUEST, payload: {order}});
+    dispatch({type: CONFIRM_MPESA_PAYMENT, payload: order,});
     const {user : {userInfo},} = getState();
 
     try {
@@ -96,7 +96,7 @@ export const confirmMpesaOrderPayment = (order) => async (dispatch, getState) =>
             if(data.paymentResult.status){
                 dispatch({type: ORDER_PAY_SUCCESS, payload: data})
             } else{
-                dispatch({type: ORDER_PAY_FAIL, payload: data})
+                dispatch({type: ORDER_PAY_FAIL, payload: data.mpesaInfo.mpesaCustomerMessage})
             }
         }
     } catch (error) {
@@ -104,6 +104,6 @@ export const confirmMpesaOrderPayment = (order) => async (dispatch, getState) =>
         ? error.response.data.message
         : error.message;
         console.log(`error occured: ${error}`)
-        dispatch({type: ORDER_DETAILS_FAIL, payload: message});
+        dispatch({type: ORDER_PAY_FAIL, payload: message});
     }
 }

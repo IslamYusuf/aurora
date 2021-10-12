@@ -66,46 +66,45 @@ export const getMpesaAccessToken = async (req, res, next) =>{
         req.mpesaOauthToken = data.access_token;
         next()
     } catch (error) {
-        res.status(401).send({message: 'Invalid OAuth Mpesa Token'});    
+        res.status(401).send({message: `Error Retrieving Mpesa Token. ${error}`});    
     }
 }
 
 export const initiateStk = async (req,res,next) =>{
     try {
-        console.log(`initiating stk`)
         const ngrokUrl = await ngrok.connect({authtoken: process.env.NGROK_AUTH_TOKEN, addr: 5000,});
         const timestamp = datetime.create().format('YmdHMS')
         const password = Buffer.from(`${process.env.SHORT_CODE}${process.env.PASS_KEY}${timestamp}`).toString('base64')
-        
+
+        const formattedAmount = (req.order.totalPrice).toString().split('.')[0] 
+
         const body = JSON.stringify({
           BusinessShortCode: process.env.SHORT_CODE,
           Password: password,
           Timestamp: timestamp,
           TransactionType: 'CustomerPayBillOnline',
-          Amount: req.order.totalPrice || 1,
-          PartyA: req.body.mpesaPhoneNumber || process.env.PHONE_NUMBER,
+          Amount: formattedAmount || 1,
+          PartyA: req.body.mpesaPhoneNumber,
           PartyB: process.env.SHORT_CODE,
-          PhoneNumber: req.body.mpesaPhoneNumber || process.env.PHONE_NUMBER,
-          CallBackURL: `${ngrokUrl}/api/payment/mpesa/callback`, //TODO: Need to set up a callback url
+          PhoneNumber: req.body.mpesaPhoneNumber,
+          CallBackURL: `${ngrokUrl}/api/payment/mpesa/callback`,
           AccountReference: 'Aurora E-Commerce Company',
           TransactionDesc: 'Payment for goods purchased',
         });
-        
         // send response to safaricom
         const {data} = await axios.post(process.env.STKPUSH_URL, body, {
-          headers:{
-              "Authorization": `Bearer ${req.mpesaOauthToken}`,
-              "Content-type": 'application/json',
-          },
+            headers:{
+                "Authorization": `Bearer ${req.mpesaOauthToken}`,
+                "Content-type": 'application/json',
+            },
         });
         
         req.mpesaMerchantRequestId = data.MerchantRequestID;
         req.mpesaResponseCode = data.ResponseCode;
         req.mpesaCustomerMessage = data.CustomerMessage;
         req.mpesaResponseDescription = data.ResponseDescription;
-        console.log('stk sent')
         next()
       } catch (e) {
-        res.status(401).send({message: `Mpesa stkPush payment Failed. Error:${e}`, });
+        res.status(401).send({message: `Mpesa stkPush payment Failed. ${e}`, });
       }
 }
