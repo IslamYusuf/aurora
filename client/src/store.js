@@ -3,7 +3,8 @@ import thunk from 'redux-thunk';
 
 import { 
     products, product, productCreate,
-    productDelete, productUpdate, 
+    productDelete, productUpdate,
+    productCategory, productReview, 
 } from './reducers/productReducers';
 import { cart } from './reducers/cartReducers';
 import {
@@ -34,6 +35,8 @@ const initialState = {
 const reducer = combineReducers({
     products,
     product,
+    productCategory,
+    productReview,
     productCreate,
     productDelete,
     productUpdate,

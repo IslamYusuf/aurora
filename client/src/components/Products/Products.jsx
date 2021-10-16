@@ -14,7 +14,7 @@ const Products = () => {
     const {loading, error, products} = useSelector(state => state.products);
 
     useEffect(() => {
-        dispatch(getProducts())
+        dispatch(getProducts({}))
     }, [dispatch]);
 
     return (

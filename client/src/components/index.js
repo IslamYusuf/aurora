@@ -1,5 +1,7 @@
 export {default as Products} from './Products/Products';
 export {default as ProductDetails} from './Products/ProductDetails/ProductDetails';
+//export {default as SearchBox} from './Products/SearchBox';
+export {default as Search} from './Products/Search';
 export {default as Cart} from './Cart/Cart';
 export {default as Order} from './Order/Order';
 export {default as OrderHistory} from './Order/OrderHistory';
@@ -12,6 +14,7 @@ export {default as UserProfile} from './User/UserProfile';
 export {default as PrivateRoute} from './Admin/PrivateRoute';
 export {default as Navbar} from './Navbar/Navbar';
 export {default as AdminRoute} from './Admin/AdminRoute';
+export {default as UserList} from './User/UserList';
 export {default as UserEdit} from './User/UserEdit';
 export {default as OrderList} from './Order/OrderList';
 export {default as ProductList} from './Products/ProductList/ProductList';

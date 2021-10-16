@@ -13,7 +13,7 @@ import {
 import {createProduct,deleteProduct,getProducts,} from '../../../actions/productActions';
 import Loading from '../../Loading';
 import Message from '../../Message';
-import {PRODUCT_CREATE_RESET,PRODUCT_DELETE_RESET,} from '../../../constants/productConstants';
+import {PRODUCT_CREATE_RESET, PRODUCT_DELETE_RESET,} from '../../../constants/productConstants';
 
 const StyledTableCell = withStyles((theme) => ({
     head: {
@@ -73,7 +73,7 @@ const ProductList = () => {
         if (successDelete) {
             dispatch({ type: PRODUCT_DELETE_RESET });
         }
-        dispatch(getProducts());
+        dispatch(getProducts({}));
     }, [createdProduct,dispatch,history,successCreate,successDelete,userInfo._id,]);
 
     const deleteHandler = (product) => {
