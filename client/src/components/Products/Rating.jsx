@@ -1,5 +1,5 @@
 
-const Rating = ({rating, reviews}) => {
+const Rating = ({rating, reviews, caption}) => {
     return (
         <div className="rating">
             <span><i className={
@@ -47,7 +47,11 @@ const Rating = ({rating, reviews}) => {
                 }>
                 </i>
             </span>
-            <span>{` ${reviews} reviews`}</span>
+            {caption ? (
+                <span>{caption}</span>
+            ): (
+                <span>{` ${reviews} reviews`}</span>
+            )}
         </div>
     )
 }

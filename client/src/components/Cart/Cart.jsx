@@ -85,7 +85,7 @@ const Cart = () => {
           <div className={classes.cardDetails}>
             <Typography variant="h4">
                 Subtotal ({cartItems.reduce((a, c) => a + c.qty, 0)} items)
-                : ${cartItems.reduce((a,c) => a + c.price * c.qty, 0)}
+                : Ksh{cartItems.reduce((a,c) => a + c.price * c.qty, 0)}
             </Typography>
             <div >
               <Button 

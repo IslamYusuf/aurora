@@ -1,7 +1,9 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
+import Grid from '@material-ui/core/Grid';
 
+import useStyles from './styles';
 import { getProducts } from '../../actions/productActions';
 import Loading from '../Loading';
 import Message from '../Message';
@@ -10,6 +12,7 @@ import Rating from './Rating';
 import { prices, ratings } from '../../utils';
 
 const Search = (props) =>{
+  const classes = useStyles();
   const {
     name = 'all',
     category = 'all',
@@ -141,33 +144,44 @@ const Search = (props) =>{
           </div>
         </div>
         <div className="col-3">
-          {loading ? (
-            <Loading></Loading>
-          ) : error ? (
-            <Message variant="danger">{error}</Message>
-          ) : (
-            <>
-              {products.length === 0 && (
-                <Message>No Product Found</Message>
-              )}
-              <div className="row center">
-                {products.map((product) => (
-                  <Product key={product._id} product={product}></Product>
-                ))}
-              </div>
-              <div className="row center pagination">
-                {[...Array(pages).keys()].map((x) => (
-                  <Link
-                    className={x + 1 === page ? 'active' : ''}
-                    key={x + 1}
-                    to={getFilterUrl({ page: x + 1 })}
-                  >
-                    {x + 1}
-                  </Link>
-                ))}
-              </div>
-            </>
-          )}
+          <div className={classes.content}>
+            {loading ? (
+              <Loading></Loading>
+            ) : error ? (
+              <Message variant="danger">{error}</Message>
+            ) : (
+              <>
+                {products.length === 0 && (
+                  <Message>No Product Found</Message>
+                )}
+                <div className="row center">
+                  <Grid container justifyContent="center" spacing={4}>
+                    {products.map((product) => (
+                      <Grid key={product._id} item xs={12} sm={3}>
+                        <Product product={product}></Product>
+                      </Grid>
+                    ))}
+                  </Grid>
+                </div>  
+                {/* <div className="row center">
+                  {products.map((product) => (
+                    <Product key={product._id} product={product}></Product>
+                  ))}
+                </div> */}
+                <div className="row center pagination">
+                  {[...Array(pages).keys()].map((x) => (
+                    <Link
+                      className={x + 1 === page ? 'active' : ''}
+                      key={x + 1}
+                      to={getFilterUrl({ page: x + 1 })}
+                    >
+                      {x + 1}
+                    </Link>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </div>

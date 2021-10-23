@@ -27,14 +27,15 @@ const Product = ({product}) => {
                     </Typography>
                 </div>
                 <Rating rating={product.rating} reviews={product.numReviews} />
-            </CardContent>
-            <CardActions disableSpacing className={classes.cardActions}>
-                <IconButton aria-label="Add to Cart" >
-                <AddShoppingCart />
-                </IconButton>
-            </CardActions>
+            </CardContent>            
         </Card>
     )
 }
 
 export default Product
+
+//<CardActions disableSpacing className={classes.cardActions}>
+//    <IconButton aria-label="Add to Cart" >
+//    <AddShoppingCart />
+//   </IconButton>
+//</CardActions>

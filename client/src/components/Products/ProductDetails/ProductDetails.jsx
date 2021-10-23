@@ -162,6 +162,12 @@ const ProductDetails = () => {
                                 <div>
                                 <h2>Write a customer review</h2>
                                 </div>
+                                {loadingReviewCreate && <Loading></Loading>}
+                                {errorReviewCreate && (
+                                    <Message variant="danger">
+                                    {errorReviewCreate}
+                                    </Message>
+                                )}
                                 <div>
                                 <label htmlFor="rating">Rating</label>
                                 <select
@@ -187,17 +193,12 @@ const ProductDetails = () => {
                                 </div>
                                 <div>
                                 <label />
-                                <button className="primary" type="submit">
+                                <Button type='submit'
+                                fullWidth variant='contained' color='primary'>
                                     Submit
-                                </button>
+                                </Button>
                                 </div>
                                 <div>
-                                {loadingReviewCreate && <Loading></Loading>}
-                                {errorReviewCreate && (
-                                    <Message variant="danger">
-                                    {errorReviewCreate}
-                                    </Message>
-                                )}
                                 </div>
                             </form>
                             ) : (

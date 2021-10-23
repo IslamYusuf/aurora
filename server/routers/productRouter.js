@@ -10,7 +10,7 @@ const productRouter = express.Router();
 productRouter.get(
     '/',
     expressAsyncHandler(async (req, res) =>{
-      const pageSize = 3;
+      const pageSize = 0;
       const page = Number(req.query.pageNumber) || 1;
       const name = req.query.name || '';
       const category = req.query.category || '';
@@ -64,7 +64,7 @@ productRouter.get(
 );
 
 productRouter.get('/seed', expressAsyncHandler(async (req, res) =>{
-    //await Product.remove({});
+    await Product.remove({});
     const createdProducts = await Product.insertMany(data.products);
     res.send({createdProducts});
 }))

@@ -11,7 +11,7 @@ console.log(url) */
 export const generateToken = (user) =>{
     return jwt.sign({
         _id: user._id,
-        name: user.name,
+        name: `${user.firstName} ${user.lastName}`,
         email: user.email,
         isAdmin: user.isAdmin}, process.env.JWT_SECRET  || 'securekey', {
             expiresIn: '30d',
