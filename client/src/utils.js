@@ -41,3 +41,28 @@ export const ratings = [
         rating: 1,
     },
 ];
+
+const validateEmail = (email) =>{
+  if(!(
+    (email.indexOf(".") > 0) 
+    && (email.indexOf("@") > 0)) 
+    || /[^a-zA-Z0-9.@_-]/.test(email))
+    return "Email address entered is invalid.\n";
+  return ""
+}
+
+const validatePassword = (password,msg) =>{
+  if(password.length < 6) return msg || 'Password must be atleast 6 characters\n'
+  else if(!/[a-z]/.test(password) || ! /[A-Z]/.test(password) || !/[0-9]/.test(password))
+  return msg || "Passwords require one each of a-z, A-Z and 0-9.\n"
+  return ""
+}
+
+export const validateUserInfo = (email, password, errorMsg='') =>{
+  let msg;
+  msg = validateEmail(email);
+  msg += validatePassword(password,errorMsg);
+  if (msg === '') return {success:true};
+  else return {msg, success:false}
+}
+

@@ -133,6 +133,10 @@ export default function SignUp() {
                 autoComplete="current-password"
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
+              <font face="Arial" size="-10" color="#a4a4a4"><i>(Password must be at least 6 characters long and
+                should contain a lowercase letter, uppercase and 
+                a digit.)</i>
+              </font>
             </Grid>
           </Grid>
           <Button

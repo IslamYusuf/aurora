@@ -9,40 +9,53 @@ import {
     USER_LIST_FAIL,USER_DELETE_REQUEST,USER_DELETE_SUCCESS,USER_DELETE_FAIL,
     USER_UPDATE_SUCCESS,USER_UPDATE_FAIL
 } from '../constants/userConstants';
+import { validateUserInfo } from '../utils';
 
 export const signin = (email, password) => async (dispatch, getState) =>{
     dispatch({type: USER_SIGNIN_REQUEST, payload: {email, password}});
-    try {
-        const {data} = await Axios.post('/api/users/signin', {email, password});
-        const savedCartItems = data.cartItems;
-        dispatch({type: USER_SIGNIN_SUCCESS, payload: data});
-        localStorage.setItem('userInfo', JSON.stringify(data));
-        
-        if(savedCartItems) for(let i=0; i < savedCartItems.length; ++i) dispatch({type:CART_ADD_ITEM, payload:savedCartItems[i]});
-        const {cart:{cartItems}} = getState();
-        localStorage.setItem('cartItems',JSON.stringify(cartItems));
-    } catch (e) {
-        dispatch({type: USER_SIGNIN_FAIL,
-            payload: e.response && e.response.data.message
-            ? e.response.data.message
-            : e.message})
+    const {msg='', success} = validateUserInfo(email, password, 'Invalid Password\n')
+    
+    if(success){
+      try {
+          const {data} = await Axios.post('/api/users/signin', {email, password});
+          const savedCartItems = data.cartItems;
+          dispatch({type: USER_SIGNIN_SUCCESS, payload: data});
+          localStorage.setItem('userInfo', JSON.stringify(data));
+          
+          if(savedCartItems) for(let i=0; i < savedCartItems.length; ++i) dispatch({type:CART_ADD_ITEM, payload:savedCartItems[i]});
+          const {cart:{cartItems}} = getState();
+          localStorage.setItem('cartItems',JSON.stringify(cartItems));
+        } catch (e) {
+          dispatch({type: USER_SIGNIN_FAIL,
+              payload: e.response && e.response.data.message
+              ? e.response.data.message
+              : e.message})
+      }
     }
+    else dispatch({type: USER_SIGNIN_FAIL, payload: msg})
 }
 export const signup = (firstName, lastName, email, password) => async (dispatch) =>{
     dispatch({type: USER_SIGNUP_REQUEST, payload: {email, password}});
 
-    try {
-        const {data} = await Axios.post('/api/users/signup', {firstName, lastName, email, password});
-        dispatch({type: USER_SIGNUP_SUCCESS, payload: data});
-        dispatch({type: USER_SIGNIN_SUCCESS, payload: data});
-        localStorage.setItem('userInfo', JSON.stringify(data));
-
-    } catch (e) {
-        dispatch({type: USER_SIGNUP_FAIL,
-            payload: e.response && e.response.data.message
-            ? e.response.data.message
-            : e.message})
+    const {msg='', success} = validateUserInfo(email, password);
+    
+    if(success){
+      try {
+          const {data} = await Axios.post('/api/users/signup', {firstName, lastName, email, password});
+          dispatch({type: USER_SIGNUP_SUCCESS, payload: data});
+          dispatch({type: USER_SIGNIN_SUCCESS, payload: data});
+          localStorage.setItem('userInfo', JSON.stringify(data));
+  
+      } catch (e) {
+          dispatch({type: USER_SIGNUP_FAIL,
+              payload: e.response && e.response.data.message
+              ? e.response.data.message.includes('duplicate key')
+              ? 'An account already exisit for the email entered.' 
+              : e.response.data.message
+              : e.message})
+      }
     }
+    else dispatch({type:USER_SIGNUP_FAIL, payload:msg})
 }
 
 export const signout = () => async (dispatch, getState) =>{
