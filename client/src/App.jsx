@@ -42,6 +42,9 @@ const App = () => {
                             <Route exact path="/search/category/:category/name/:name/min/:min/max/:max/rating/:rating/order/:order/pageNumber/:pageNumber"
                                 component={Search}/>
                         </main>
+                        <footer className="row center">                            
+                            <div>All right reserved &copy;</div>{' '}
+                        </footer>
                     </div>
                 </MuiThemeProvider>
             </BrowserRouter>

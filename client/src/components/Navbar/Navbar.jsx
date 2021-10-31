@@ -54,7 +54,7 @@ const NavbarBar = () => {
                             <i className="fa fa-bars"></i>
                         </button>
                         <Typography component={Link} to='/' variant='h4' color='inherit'>
-                                Aurora
+                            BinAthman
                         </Typography>
                     </div>
                     <div>

@@ -77,9 +77,9 @@ const ProductDetails = () => {
                                     <Rating rating={product.rating} reviews={product.numReviews}  />
                                 </li>
                                 <li>
-                                    <Typography>Price: Ksh{product.price}</Typography>
+                                    <Typography><b>Price:</b> Ksh{product.price}</Typography>
                                 </li>
-                                <li>Description: 
+                                <li><b>Description:</b> 
                                     <Typography>
                                         {product.description}
                                     </Typography>

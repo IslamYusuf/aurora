@@ -18,7 +18,7 @@ function Copyright() {
     <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright © '}
       <Link to="/">
-        Aurora
+        BinAthman Supermarket
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -81,6 +81,8 @@ export default function SignUp() {
                 id="firstName"
                 label="First Name"
                 autoFocus
+                margin="normal"
+                inputProps={{maxLength: 20}}
                 onChange={(e) => setFirstName(e.target.value)}
               />
             </Grid>
@@ -93,18 +95,22 @@ export default function SignUp() {
                 label="Last Name"
                 name="lastName"
                 autoComplete="lname"
+                margin="normal"
+                inputProps={{maxLength: 20}}
                 onChange={(e) => setLastName(e.target.value)}
               />
             </Grid>
             <Grid item xs={12}>
               <TextField
                 variant="outlined"
+                type="email"
                 required
                 fullWidth
                 id="email"
                 label="Email Address"
                 name="email"
                 autoComplete="email"
+                inputProps={{maxLength: 40}}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </Grid>
@@ -118,6 +124,10 @@ export default function SignUp() {
                 type="password"
                 id="password"
                 autoComplete="current-password"
+                title="Password must be at least 6 characters long and
+                should contain a lowercase letter, uppercase and 
+                a digit."
+                inputProps={{maxLength: 35}}
                 onChange={(e) => setPassword(e.target.value)}
               />
             </Grid>
@@ -131,6 +141,10 @@ export default function SignUp() {
                 type="password"
                 id="confirmPassword"
                 autoComplete="current-password"
+                title="Password must be at least 6 characters long and
+                should contain a lowercase letter, uppercase and 
+                a digit."
+                inputProps={{maxLength: 35}}
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
               <font face="Arial" size="-10" color="#a4a4a4"><i>(Password must be at least 6 characters long and

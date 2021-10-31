@@ -23,7 +23,7 @@ const PlaceOrder = () => {
     
     const toPrice = (num) => Number(num.toFixed(2));
     cart.itemsPrice = toPrice(cartItems.reduce((a, c) => a + c.qty * c.price, 0));
-    cart.shippingPrice = cart.itemsPrice > 100 ? toPrice(0) : toPrice(10)
+    cart.shippingPrice = cart.itemsPrice < 100 ? toPrice(10) : toPrice(0)
     cart.taxPrice = toPrice(0.15 * cart.itemsPrice);
     cart.totalPrice = cart.itemsPrice + cart.shippingPrice + cart.taxPrice;
 
@@ -50,7 +50,7 @@ const PlaceOrder = () => {
                                 <p>
                                     <strong>Name:</strong> {fullName} <br />
                                     <strong>Address:</strong> {address},
-                                    {city}, {postalCode},
+                                    {postalCode}, {city},
                                     {country}
                                 </p>
                             </div>
@@ -106,14 +106,14 @@ const PlaceOrder = () => {
                             </li>
                             <li>
                                 <div className='row'>
-                                    <div>Shipping</div>
+                                    <div>Delivery</div>
                                     <div>Ksh{cart.shippingPrice.toFixed(2)}</div>
                                 </div>
                             </li>
                             <li>
                                 <div className='row'>
-                                    <div>Tax</div>
-                                    <div>${cart.taxPrice.toFixed(2)}</div>
+                                    <div>V.a.t</div>
+                                    <div>Ksh{cart.taxPrice.toFixed(2)}</div>
                                 </div>
                             </li>
                             <li>

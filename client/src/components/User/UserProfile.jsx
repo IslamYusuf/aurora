@@ -62,61 +62,70 @@ const UserProfile1 = () => {
                             <TextField
                                 name="firstName"
                                 variant="outlined"
-                                required
                                 fullWidth
+                                margin="normal"
                                 id="firstName"
                                 label="First Name"
                                 value={firstName}
+                                inputProps={{maxLength: 20}}
                                 onChange={(e) => setFirstName(e.target.value)}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 variant="outlined"
-                                required
                                 fullWidth
+                                margin="normal"
                                 id="lastName"
                                 label="Last Name"
                                 name="lastName"
                                 value={lastName}
+                                inputProps={{maxLength: 20}}
                                 onChange={(e) => setLastName(e.target.value)}
                             />
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
                                 variant="outlined"
-                                required
+                                type="email"
                                 fullWidth
                                 id="email"
                                 label="Email Address"
                                 name="email"
                                 value={email}
+                                inputProps={{maxLength: 40}}
                                 onChange={(e) => setEmail(e.target.value)}
                             />
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
                                 variant="outlined"
-                                required
                                 fullWidth
                                 name="password"
                                 label="Password"
                                 type="password"
                                 id="password"
                                 value={password}
+                                title="Password must be at least 6 characters long and
+                                    should contain a lowercase letter, uppercase and 
+                                    a digit."
+                                inputProps={{maxLength: 35}}
                                 onChange={(e) => setPassword(e.target.value)}
                             />
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
                                 variant="outlined"
-                                required
                                 fullWidth
                                 name="confirmPassword"
                                 label="Confirm Password"
                                 type="password"
                                 id="confirmPassword"
                                 value={confirmPassword}
+                                title="Password must be at least 6 characters long and
+                                    should contain a lowercase letter, uppercase and 
+                                    a digit."
+                                inputProps={{maxLength: 35}}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
                             />
                         </Grid>

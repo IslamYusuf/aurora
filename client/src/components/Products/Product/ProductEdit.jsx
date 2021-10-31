@@ -96,56 +96,57 @@ const ProductEdit = (props) => {
                                 <Grid item xs={12} sm={6}>
                                     <TextField 
                                     variant="outlined" margin="normal" required fullWidth id="name"
-                                    label="Name" name="name" autoFocus
+                                    label="Name" name="name" autoFocus type='text'
+                                    inputProps={{maxLength: 40}}
                                     onChange={(e) => setName(e.target.value)} value={name}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <TextField
-                                    variant="outlined" margin="normal" required fullWidth name="category"
-                                    label="Category" id="category" value={category}
+                                    variant="outlined"margin="normal"  required fullWidth name="category"
+                                    label="Category" id="category" value={category} inputProps={{maxLength: 20}}
                                     onChange={(e) => setCategory(e.target.value)}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <TextField
-                                    variant="outlined" margin="normal" required fullWidth name="brand"
-                                    label="Brand" id="brand" value={brand}
+                                    variant="outlined" required fullWidth name="brand"
+                                    label="Brand" id="brand" value={brand} inputProps={{maxLength: 20}}
                                     onChange={(e) => setBrand(e.target.value)}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <TextField
-                                    variant="outlined" margin="normal" required fullWidth
+                                    variant="outlined" required fullWidth type='number'
                                     name="price" label="Price" id="price" value={price}
                                     onChange={(e) => setPrice(e.target.value)}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <TextField
-                                    variant="outlined" margin="normal" required fullWidth name="countInStock"
+                                    variant="outlined" required fullWidth name="countInStock"
                                     label="Count In Stock" id="countInStock" value={countInStock}
-                                    onChange={(e) => setCountInStock(e.target.value)}
+                                    onChange={(e) => setCountInStock(e.target.value)} type='number'
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <TextField
-                                    variant="outlined" margin="normal" required fullWidth maxRows='3'
+                                    variant="outlined"  required fullWidth inputProps={{maxLength: 40}}
+                                    name="image" label="Image" id="image" value={image}
+                                    onChange={(e) => setImage(e.target.value)}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={12}>
+                                    <TextField
+                                    variant="outlined" required fullWidth maxRows='3'
                                     type='text' name="description" label="Enter description..." 
-                                    id="description" value={description}
+                                    id="description" value={description} multiline
                                     onChange={(e) => setDescription(e.target.value)}
                                     />
                                 </Grid>
-                                <Grid item xs={12} sm={6}>
+                                <Grid item xs={12} sm={12}>
                                     <TextField
-                                    variant="outlined" margin="normal" required fullWidth
-                                    name="image" label="Image" id="image" value={image}
-                                    onChange={(e) => setImage(e.target.value)} disabled
-                                    />
-                                </Grid>
-                                <Grid item xs={12} sm={6}>
-                                    <TextField
-                                    variant="outlined" margin="normal" required fullWidth
+                                    variant="outlined"  fullWidth
                                     type="file" id="imageFile"
                                     onChange={uploadFileHandler}
                                     />
@@ -156,8 +157,6 @@ const ProductEdit = (props) => {
                                         <Message variant="danger">{errorUpload}</Message>
                                     )}
                                 </Grid>
-                                
-                                
                             </Grid>
                             <Button
                                 type="submit" fullWidth variant="contained"

@@ -10,7 +10,7 @@ const productRouter = express.Router();
 productRouter.get(
     '/',
     expressAsyncHandler(async (req, res) =>{
-      const pageSize = 0;
+      const pageSize = 7;
       const page = Number(req.query.pageNumber) || 1;
       const name = req.query.name || '';
       const category = req.query.category || '';
@@ -122,7 +122,7 @@ productRouter.post('/', isAuth, isAdmin,
   expressAsyncHandler(async (req, res) => {
     const product = new Product({
       name: 'sample name ' + Date.now(),
-      image: '/images/p1.jpg',
+      image: '/images/default.jpg',
       price: 0,
       category: 'sample category',
       brand: 'sample brand',

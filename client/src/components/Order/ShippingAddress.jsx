@@ -4,7 +4,8 @@ import { useHistory } from "react-router";
 import {
     Button, TextField, Grid,
     Typography, Container,Divider,
-    FormControl, FormLabel,RadioGroup,FormControlLabel,Radio,
+    FormControl, FormLabel,RadioGroup,
+    FormControlLabel,Radio, InputLabel, Select, MenuItem,
 } from '@material-ui/core';
 
 import { saveShippingAddress, savePaymentMethod } from "../../actions/cartActions";
@@ -29,9 +30,9 @@ const ShippingAddress = () => {
         ? shippingAddress.fullName.split(' ')[1]
         : '');
     const [address, setAddress] = useState(shippingAddress.address || '');
-    const [city, setCity] = useState(shippingAddress.city || '');
+    const [city, setCity] = useState('Mombasa');
     const [postalCode, setPostalCode] = useState(shippingAddress.postalCode || '');
-    const [country, setCountry] = useState(shippingAddress.country || '');
+    const [country, setCountry] = useState('Kenya');
 
     const dispatch = useDispatch();
 
@@ -47,7 +48,7 @@ const ShippingAddress = () => {
             <Container component='main' maxWidth='xs' className={classes.container}>
                 <div className={classes.paper}>
                     <Typography component="h1" variant="h5" gutterBottom>
-                        Shipping and Payment Information
+                        Payment Information
                     </Typography>
                     <form className={classes.form} onSubmit={submitHandler}>
                         <Grid container spacing={2}>
@@ -56,7 +57,7 @@ const ShippingAddress = () => {
                                     name="firstName" variant="outlined" required
                                     fullWidth id="firstName" label="First Name" autoFocus
                                     onChange={(e) => setFirstName(e.target.value)}
-                                    value={firstName}
+                                    value={firstName} inputProps={{maxLength: 20}}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
@@ -64,6 +65,7 @@ const ShippingAddress = () => {
                                     variant="outlined"required fullWidth value={lastName}
                                     id="lastName"label="Last Name"name="lastName"
                                     onChange={(e) => setLastName(e.target.value)}
+                                    inputProps={{maxLength: 20}}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
@@ -71,28 +73,58 @@ const ShippingAddress = () => {
                                     variant="outlined" required fullWidth value={address}
                                     id="address" label="Address" name="address"
                                     onChange={(e) => setAddress(e.target.value)}
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={6}>
-                                <TextField
-                                    variant="outlined" required fullWidth
-                                    name="city" label="City" id="city" value={city}
-                                    onChange={(e) => setCity(e.target.value)}
+                                    inputProps={{maxLength: 40}}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <TextField
                                     variant="outlined" required fullWidth value={postalCode}
-                                    id="postalCode" label="Postal Code" name="postalCode"
+                                    id="postalCode" label="House Number" name="postalCode"
                                     onChange={(e) => setPostalCode(e.target.value)}
+                                    inputProps={{maxLength: 20}}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
+                                <FormControl fullWidth variant='outlined'>
+                                    <InputLabel id="country">Country</InputLabel>
+                                    <Select
+                                        labelId="country"
+                                        id="country"
+                                        value={country}
+                                        label="Country"
+                                        onChange={(e) => setCountry(e.target.value)}
+                                    >
+                                        <MenuItem value={country}>Kenya</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                            {/* <Grid item xs={12} sm={6}>
                                 <TextField
                                     variant="outlined" required fullWidth value={country}
                                     name="country" label="Country" id="country"
                                     onChange={(e) => setCountry(e.target.value)}
                                 />
+                            </Grid> */}
+                            {/* <Grid item xs={12} sm={6}>
+                                <TextField
+                                    variant="outlined" required fullWidth
+                                    name="city" label="City" id="city" value={city}
+                                    onChange={(e) => setCity(e.target.value)}
+                                />
+                            </Grid> */}
+                            <Grid item xs={12} sm={6}>
+                                <FormControl fullWidth variant='outlined'>
+                                    <InputLabel id="city">City</InputLabel>
+                                    <Select
+                                        labelId="city"
+                                        id="city"
+                                        value={city}
+                                        label="City"
+                                        onChange={(e) => setCity(e.target.value)}
+                                    >
+                                        <MenuItem value={city}>Mombasa</MenuItem>
+                                    </Select>
+                                </FormControl>
                             </Grid>
                         </Grid>
                         <label/>
@@ -108,7 +140,7 @@ const ShippingAddress = () => {
                             type="submit" fullWidth variant="contained" 
                             color="primary" className={classes.submit}
                         >
-                            Place Order
+                            Next
                         </Button>
                     </form>
                 </div>

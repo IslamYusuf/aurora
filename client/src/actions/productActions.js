@@ -95,9 +95,11 @@ export const updateProduct = (product) => async (dispatch, getState) => {
     } catch (error) {
       const message =
         error.response && error.response.data.message
-          ? error.response.data.message
+          ? error.response.data.message.includes('E11000 duplicate key error collection')
+          ? 'Please change the name of the product as their exists another product with that name. NOTE: PRODUCT NAMES SHOULD BE UNIQUE'
+          : error.response.data.message
           : error.message;
-      dispatch({ type: PRODUCT_UPDATE_FAIL, error: message });
+      dispatch({ type: PRODUCT_UPDATE_FAIL, payload: message });
     }
 };
 

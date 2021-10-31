@@ -18,7 +18,7 @@ function Copyright() {
     <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright © '}
       <Link to='/'>
-        Aurora
+      BinAthman Supermarket
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -72,6 +72,7 @@ export default function SignIn() {
             name="email"
             autoComplete="email"
             autoFocus
+            inputProps={{maxLength: 40}}
             onChange={(e) => setEmail(e.target.value)}
           />
           <TextField
@@ -84,6 +85,7 @@ export default function SignIn() {
             type="password"
             id="password"
             autoComplete="current-password"
+            inputProps={{maxLength: 35}}
             onChange={(e) => setPassword(e.target.value)}
           />
           <Button

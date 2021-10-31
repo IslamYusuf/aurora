@@ -26,7 +26,9 @@ export const createOrder = (order) => async (dispatch, getState) => {
         dispatch({
             type: ORDER_CREATE_FAIL,
             payload: error.response && error.response.data.message
-                ? error.response.data.message
+                ? error.response.data.message.includes('Amount must convert to at least 50 cents')
+                ? 'Total Order amount MUST be at least Ksh55 to be payed using Stripe Card Payment. Please use Mpesa as your mode of payment for this order.'
+                : error.response.data.message
                 : error.message,
         })
     }
