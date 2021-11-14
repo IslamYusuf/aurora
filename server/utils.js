@@ -88,7 +88,7 @@ export const initiateStk = async (req,res,next) =>{
           PartyB: process.env.SHORT_CODE,
           PhoneNumber: req.body.mpesaPhoneNumber,
           CallBackURL: `${ngrokUrl}/api/payment/mpesa/callback`,
-          AccountReference: 'Aurora E-Commerce Company',
+          AccountReference: 'Bin-Athman E-Store( islam Yusuf Project)',
           TransactionDesc: 'Payment for goods purchased',
         });
         // send response to safaricom

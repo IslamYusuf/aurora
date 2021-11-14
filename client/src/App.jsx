@@ -8,7 +8,7 @@ import {
     PlaceOrder,ShippingAddress, Signin, Signup,
     UserProfile, PrivateRoute, Products, Navbar,
     OrderList, ProductList, ProductEdit, Dashboard,
-    UserList, UserEdit, AdminRoute,Search,
+    UserList, UserEdit, AdminRoute,Search,Map,
 } from './components'
 import theme from './theme';
 
@@ -21,19 +21,20 @@ const App = () => {
                         <Navbar/>
                         <main>
                             <Route exact path="/" component={Products} />
-                            <Route exact path="/product/:id" component={ProductDetails} />
-                            <Route exact path="/signin" component={Signin} />
                             <Route exact path="/signup" component={Signup} />
+                            <Route exact path="/signin" component={Signin} />
+                            <Route exact path="/product/:id" component={ProductDetails} />
+                            <Route exact path="/product/:id/edit" component={ProductEdit}/>
                             <Route exact path="/cart/:id?" component={Cart} />
                             <Route exact path="/shipping" component={ShippingAddress} />
                             <Route exact path="/placeorder" component={PlaceOrder} />
                             <Route exact path="/order/:id" component={Order} />
                             <Route exact path="/orderhistory" component={OrderHistory} />
                             <PrivateRoute exact path="/profile" component={UserProfile} />
-                            <PrivateRoute exact path="/user/:id/edit"component={UserEdit}/>
+                            <PrivateRoute path="/map" component={Map}></PrivateRoute>
+                            <AdminRoute exact path="/user/:id/edit"component={UserEdit}/>
                             <AdminRoute exact path="/userlist" component={UserList}/>
                             <AdminRoute exact path="/orderlist"component={OrderList}/>
-                            <Route exact path="/product/:id/edit" component={ProductEdit}/>
                             <AdminRoute exact path="/productlist" component={ProductList}/>
                             <AdminRoute exact path="/dashboard" component={Dashboard}/>
                             <Route exact path="/search/name/:name?" component={Search}/>

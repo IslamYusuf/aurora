@@ -22,6 +22,7 @@ const UserEdit = (props) => {
     const [isAdmin, setIsAdmin] = useState(false);
 
     const { loading, error, user } = useSelector((state) => state.userDetails);
+    const { userInfo } = useSelector((state) => state.user);
     const userUpdate = useSelector((state) => state.userUpdate);
     const {
         loading: loadingUpdate,
@@ -94,6 +95,7 @@ const UserEdit = (props) => {
                             label="Email Address"
                             name="email"
                             value={email}
+                            disabled={(email === "admin@example.com") || userInfo.email === email}
                             onChange={(e) => setEmail(e.target.value)}
                         />
                     </Grid>
@@ -104,6 +106,7 @@ const UserEdit = (props) => {
                             control={
                             <Checkbox
                                 checked={isAdmin}
+                                disabled={(email === "admin@example.com") || userInfo.email === email}
                                 onChange={(e) => setIsAdmin(e.target.checked)}
                                 color="primary"
                             />

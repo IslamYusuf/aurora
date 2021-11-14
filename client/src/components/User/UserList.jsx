@@ -8,7 +8,7 @@ import {
     withStyles, makeStyles  
 } from '@material-ui/core/styles';
 
-import { deleteUser, listUsers } from '../../actions/userActions';
+import { deleteUser, listUsers, userDetails } from '../../actions/userActions';
 import Loading from '../Loading';
 import Message from '../Message';
 import { USER_DETAILS_RESET } from '../../constants/userConstants';
@@ -42,8 +42,8 @@ const useStyles = makeStyles({
 
 const UserList = (props) => {
     const classes = useStyles();
-    const userList = useSelector((state) => state.userList);
-    const { loading, error, users } = userList;
+    const { loading, error, users } = useSelector((state) => state.userList);
+    const {userInfo} = useSelector((state) => state.user);
     const userDelete = useSelector((state) => state.userDelete);
     const {
         loading: loadingDelete,
@@ -52,15 +52,25 @@ const UserList = (props) => {
     } = userDelete;
 
     const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch(listUsers());
-        dispatch({type: USER_DETAILS_RESET,});
-    }, [dispatch, successDelete]);
+
     const deleteHandler = (user) => {
         if (window.confirm('Are you sure?')) {
             dispatch(deleteUser(user._id));
         }
+        /* if(!userInfo) dispatch(listUsers());
+        else{
+        } */
     };
+    const editHandler = (userId) => {
+        dispatch({ type: USER_DETAILS_RESET });
+        props.history.push(`/user/${userId}/edit`);
+    }
+
+    useEffect(() => {
+        //dispatch(userDetails(userInfo._id));
+        dispatch(listUsers());
+        dispatch({type: USER_DETAILS_RESET});
+    }, [dispatch, successDelete]);
 
     return (
         <div>
@@ -98,11 +108,13 @@ const UserList = (props) => {
                             disableRipple size='small'>
                                 <Button 
                                 color='primary' size='small'
-                                onClick={() => props.history.push(`/user/${user._id}/edit`)}>
+                                disabled={user.isAdmin && user.email === "admin@example.com"}
+                                onClick={() => editHandler(user._id)}>
                                     Edit
                                 </Button>
                                 <Button 
                                 color='secondary' size='small'
+                                disabled={user.isAdmin && user.email === "admin@example.com"}
                                 onClick={() => deleteHandler(user)}>
                                     Delete
                                 </Button>

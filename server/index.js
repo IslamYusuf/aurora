@@ -28,6 +28,9 @@ app.use('/api/products', productRouter);
 app.use('/api/orders', orderRouter);
 app.use('/api/uploads', uploadRouter);
 app.use('/api/payment', paymentRouter)
+app.get('/api/config/maptiler', (req, res) => {
+    res.send(process.env.MAPTILER_URL || '');
+});
 app.get('/', (req, res) =>{
     res.send('Server is running')
 })

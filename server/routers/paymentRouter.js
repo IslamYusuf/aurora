@@ -23,7 +23,7 @@ paymentRouter.post('/mpesa/:id/pay',
             req.order.mpesaInfo.isPayInProgress = true;
 
             const updatedOrder = await req.order.save();
-
+            if(updatedOrder) console.log(`updatedOrder: ${updatedOrder}`)
             res.status(200).send(updatedOrder)
         } else {
             console.log('Stk response failed')

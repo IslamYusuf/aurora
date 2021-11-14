@@ -28,11 +28,14 @@ const UserProfile1 = () => {
             dispatch({type: USER_UPDATE_PROFILE_RESET});
             dispatch(userDetails(userInfo._id))
         } else {
+            if(userInfo.email !== user.email){
+                dispatch(userDetails(userInfo._id));
+            }
             setFirstName(user.firstName)
             setLastName(user.lastName)
             setEmail(user.email)
         }
-    }, [dispatch, userInfo._id, user])
+    }, [dispatch, userInfo._id, user, userInfo.email])
 
     const submitHandler = (e) => {
         e.preventDefault();
@@ -93,6 +96,7 @@ const UserProfile1 = () => {
                                 label="Email Address"
                                 name="email"
                                 value={email}
+                                disabled={userInfo.isAdmin}
                                 inputProps={{maxLength: 40}}
                                 onChange={(e) => setEmail(e.target.value)}
                             />

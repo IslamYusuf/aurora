@@ -20,6 +20,7 @@ export {default as OrderList} from './Order/OrderList';
 export {default as ProductList} from './Products/ProductList/ProductList';
 export {default as ProductEdit} from './Products/Product/ProductEdit';
 export {default as Dashboard} from './Admin/Dashboard/Dashboard';
+export {default as Map} from './Map/Map';
 
 
 

@@ -7,7 +7,8 @@ import {
     USER_UPDATE_REQUEST,USER_UPDATE_RESET,USER_UPDATE_SUCCESS,
     USER_UPDATE_FAIL,USER_LIST_FAIL,USER_LIST_REQUEST,
     USER_LIST_SUCCESS,USER_DELETE_FAIL,USER_DELETE_REQUEST,
-    USER_DELETE_RESET,USER_DELETE_SUCCESS,USER_DETAILS_RESET
+    USER_DELETE_RESET,USER_DELETE_SUCCESS,USER_DETAILS_RESET,
+    USER_ADDRESS_MAP_CONFIRM,
 } from "../constants/userConstants";
 
 export const user = (state={}, action) =>{
@@ -117,3 +118,11 @@ export const userDelete = (state = {}, action) => {
     }
 };
 
+export const userAddressMap = (state = {}, action) => {
+  switch (action.type) {
+    case USER_ADDRESS_MAP_CONFIRM:
+      return { address: action.payload };
+    default:
+      return state;
+  }
+};

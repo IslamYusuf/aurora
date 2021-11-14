@@ -266,8 +266,7 @@ const Order = () => {
                                         size="large" type="button"
                                     >
                                         Deliver Order
-                                    </Button> 
-                                    
+                                    </Button>  
                                 </li>
                             )}
                         </ul>

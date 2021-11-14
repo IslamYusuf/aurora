@@ -81,14 +81,19 @@ export const confirmMpesaOrderPayment = (order) => async (dispatch, getState) =>
     const {user : {userInfo},} = getState();
 
     try {
+        console.log(`OrderID: ${order._id}`) 
         const {data} = await Axios.get(`/api/orders/${order._id}`, {
             headers :{
                 Authorization: `Bearer ${userInfo.token}`
             },
         });
-        console.log('inside confirmMpesaOrderPayment')
-        console.log(data.paymentResult.status)
+        console.log(`Data: ${data}`)
+        /* console.log(`inside confirmMpesaOrderPayment. PayInProgress:${data.mpesaInfo.isPayInProgress}
+        PaymentResultStatus:${data.paymentResult.status}`) */
+        
+        //console.log(data.paymentResult.status)
         console.log(data.mpesaInfo.isPayInProgress)
+        console.log(`OrderID After: ${order._id}`)
         
         if(data.mpesaInfo.isPayInProgress){ //Alternatively - .id
             dispatch({type:ORDER_PAY_IN_PROGRESS, payload: data})

@@ -33,14 +33,59 @@ const ShippingAddress = () => {
     const [city, setCity] = useState('Mombasa');
     const [postalCode, setPostalCode] = useState(shippingAddress.postalCode || '');
     const [country, setCountry] = useState('Kenya');
+    const [lat, setLat] = useState(shippingAddress.lat);
+    const [lng, setLng] = useState(shippingAddress.lng);
+    const { address: addressMap } = useSelector((state) => state.userAddressMap);
 
     const dispatch = useDispatch();
 
     const submitHandler = (e) =>{
         e.preventDefault();
-        dispatch(saveShippingAddress({fullName:`${firstName} ${lastName}`, address, city, postalCode, country}));
+        const newLat = addressMap ? addressMap.lat : lat;
+        const newLng = addressMap ? addressMap.lng : lng;
+        if (addressMap) {
+            setLat(addressMap.lat);
+            setLng(addressMap.lng);
+        }
+        let moveOn = true;
+        /* if (!newLat || !newLng) {
+            moveOn = window.confirm(
+                'You did not set your location on map. Continue?'
+            );
+        } */
+        if (moveOn) {
+            dispatch(
+                saveShippingAddress({
+                    fullName:`${firstName} ${lastName}`,
+                    address,
+                    city,
+                    postalCode,
+                    country,
+                    lat: newLat,
+                    lng: newLng,
+                })
+            );
+            dispatch(savePaymentMethod(paymentMethod));
+            history.push('/placeorder');
+        }
+
+        /* dispatch(saveShippingAddress({fullName:`${firstName} ${lastName}`, address, city, postalCode, country}));
         dispatch(savePaymentMethod(paymentMethod));
-        history.push('/placeorder')
+        history.push('/placeorder') */
+    };
+    const chooseOnMap = () => {
+        dispatch(
+          saveShippingAddress({
+            fullName:`${firstName} ${lastName}`,
+            address,
+            city,
+            postalCode,
+            country,
+            lat,
+            lng,
+          })
+        );
+        history.push('/map');
     };
     return (
         <>
@@ -126,6 +171,14 @@ const ShippingAddress = () => {
                                     </Select>
                                 </FormControl>
                             </Grid>
+                            {/* <Grid>
+                                <label htmlFor="chooseOnMap">Location</label>
+                                <Button
+                                    fullWidth variant="contained" 
+                                    color="primary" className={classes.submit}
+                                    onClick={chooseOnMap}
+                                >Choose On Map</Button>
+                            </Grid> */}
                         </Grid>
                         <label/>
                         <Divider style={{marginTop:'15px', marginBottom:'15px',}}/>
