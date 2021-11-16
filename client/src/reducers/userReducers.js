@@ -25,6 +25,7 @@ export const user = (state={}, action) =>{
         case USER_SIGNOUT:
             localStorage.removeItem('userInfo');
             localStorage.removeItem('shippingAddress');
+            localStorage.removeItem('paymentMethod');
             return {};
         default:
             return state;

@@ -1,29 +1,34 @@
-import { Button } from '@material-ui/core';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
+import {
+    Button, Divider, FormControl, FormLabel,
+    RadioGroup,FormControlLabel,Radio,
+} from '@material-ui/core';
 
 import { createOrder } from '../../actions/orderActions';
 import { ORDER_CREATE_RESET } from '../../constants/orderConstants';
 import CheckoutSteps from '../Cart/CheckoutSteps';
 import Loading from '../Loading';
 import Message from '../Message';
+import { savePaymentMethod } from '../../actions/cartActions';
 
 const PlaceOrder = () => {
     const history = useHistory();
     const dispatch = useDispatch();
     const cart = useSelector(state => state.cart)
+    const {userInfo} = useSelector(state => state.user)
     const {shippingAddress:{fullName, address, city, postalCode, country}, paymentMethod, cartItems} = cart;
 
     if(!paymentMethod){
-        history.push('/payment');
+        history.push('/shipping');
     }
 
     const {loading, success, error, order} = useSelector(state => state.order)
     
     const toPrice = (num) => Number(num.toFixed(2));
     cart.itemsPrice = toPrice(cartItems.reduce((a, c) => a + c.qty * c.price, 0));
-    cart.shippingPrice = cart.itemsPrice < 100 ? toPrice(10) : toPrice(0)
+    cart.shippingPrice = cart.itemsPrice < 100 ? toPrice(1) : toPrice(0)
     cart.taxPrice = toPrice(0.15 * cart.itemsPrice);
     cart.totalPrice = cart.itemsPrice + cart.shippingPrice + cart.taxPrice;
 
@@ -51,7 +56,8 @@ const PlaceOrder = () => {
                                     <strong>Name:</strong> {fullName} <br />
                                     <strong>Address:</strong> {address},
                                     {postalCode}, {city},
-                                    {country}
+                                    {country} <br />
+                                    <strong>User Account:</strong> {userInfo.email}
                                 </p>
                             </div>
                         </li>

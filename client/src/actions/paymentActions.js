@@ -28,29 +28,6 @@ export const payOrderStripe = (order, paymentIntent) => async  (dispatch, getSta
     }
 }
 
-/* export const payOrderMpesa = (order, mpesaPhoneNumber) => async  (dispatch, getState) => {
-    dispatch({type: ORDER_PAY_REQUEST, payload: {order, mpesaPhoneNumber}});
-    const {user : {userInfo},} = getState();
-    try {
-        const {data} = await Axios.post(`/api/payment/mpesa/${order._id}/pay`, {
-            mpesaPhoneNumber,
-            mpesaAmount: order.totalPrice,
-        }, {
-            headers :{
-                Authorization: `Bearer ${userInfo.token}`
-            },
-        });
-        //Todo: Create a new Type of Action to dispatch (ORDER_PAY_IN_PROGRESS) 
-        dispatch({type: ORDER_PAY_SUCCESS, payload: data})
-    } catch (error) {
-        const message = error.response && error.response.data.message
-        ? error.response.data.message
-        : error.message;
-
-        dispatch({type: ORDER_DETAILS_FAIL, payload: message});
-    }
-} */
-
 export const initiateMpesaPayment = (order, mpesaPhoneNumber) => async (dispatch, getState) =>{
     dispatch({type: ORDER_PAY_REQUEST, payload: {order, mpesaPhoneNumber}});
     //dispatch({type: ORDER_PAY_IN_PROGRESS, payload: {order, mpesaPhoneNumber}});

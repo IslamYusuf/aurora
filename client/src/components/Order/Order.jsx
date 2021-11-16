@@ -1,18 +1,19 @@
 import { useEffect, useState } from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
-import { Typography, Button, Divider} from '@material-ui/core';
+import { Typography, Button, Divider,} from '@material-ui/core';
 import { Elements, CardElement, ElementsConsumer } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import PhoneInput, { formatPhoneNumber, formatPhoneNumberIntl,
     isValidPhoneNumber, isPossiblePhoneNumber } from 'react-phone-number-input';
 import 'react-phone-number-input/style.css'
 
-import { deliverOrder, detailsOrder, payOrder } from '../../actions/orderActions';
+import { deliverOrder, detailsOrder, payOrder, updateOrder } from '../../actions/orderActions';
 import { ORDER_DELIVER_RESET, ORDER_PAY_RESET } from '../../constants/orderConstants';
 import Loading from '../Loading';
 import Message from '../Message';
 import { confirmMpesaOrderPayment, initiateMpesaPayment, payOrderStripe } from '../../actions/paymentActions';
+import { savePaymentMethod } from '../../actions/cartActions';
 
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY);
 
@@ -20,7 +21,7 @@ const Order = () => {
     const [mpesaPhoneNumber, setMpesaPhoneNumber] = useState()
     const dispatch = useDispatch();
     const {id} = useParams();
-    const {order, loading, error } = useSelector(state => state.orderDetails);
+    const {order, loading, error, paymentUpdateError } = useSelector(state => state.orderDetails);
     const {
         success:successPay,
         error: errorPay,
@@ -34,6 +35,11 @@ const Order = () => {
         success: successDeliver,
       } = useSelector((state) => state.orderDeliver);
     const {userInfo} = useSelector((state) => state.user);
+
+    const updatePaymentMethodHandler = (orderId) =>{
+        //TOdo: Update paymentMethod of order
+        dispatch(updateOrder(orderId));
+    }
 
     const deliverHandler = () => {
         dispatch(deliverOrder(order._id));
@@ -102,7 +108,8 @@ const Order = () => {
                                     <strong>Name:</strong> {order.shippingAddress.fullName} <br />
                                     <strong>Address:</strong> {order.shippingAddress.address},
                                     {order.shippingAddress.postalCode}, {order.shippingAddress.city},
-                                    {order.shippingAddress.country}
+                                    {order.shippingAddress.country} <br/>
+                                    <strong>User Account:</strong> {userInfo.email}
                                 </p>
                                 {order.isDelivered 
                                 ? (<Message variant='success'>Delivered at {order.updatedAt}</Message>)
@@ -117,9 +124,9 @@ const Order = () => {
                                     <strong>Method:</strong> {order.paymentMethod} <br />
                                 </p>
                                 {order.isPaid 
-                                ? (<Message variant='success'>Paid at {order.paidAt}</Message>)
-                                : (<Message variant='danger'>Not Paid</Message>)
-                            }
+                                    ? (<Message variant='success'>Paid at {order.paidAt}</Message>)
+                                    : (<Message variant='danger'>Not Paid</Message>)
+                                }
                             </div>
                         </li>
                         <li>
@@ -165,7 +172,7 @@ const Order = () => {
                             </li>
                             <li>
                                 <div className='row'>
-                                    <div>Shipping</div>
+                                    <div>Delivery</div>
                                     <div>Ksh{order.shippingPrice.toFixed(2)}</div>
                                 </div>
                             </li>
@@ -182,6 +189,18 @@ const Order = () => {
                                     </div>
                                     <div>
                                         <strong>Ksh{order.totalPrice.toFixed(2)}</strong>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div>
+                                    <div>
+                                        {paymentUpdateError && (<Message variant='danger' >{paymentUpdateError}</Message>)}
+                                        <Button variant="contained" color="secondary" disabled={order.isPaid}
+                                            size="small" type="button" onClick={() => updatePaymentMethodHandler(order._id)}>
+                                            Change Payment Method To 
+                                            {order.paymentMethod === 'Stripe' ? ' Mpesa' : ' Stripe'}
+                                        </Button>
                                     </div>
                                 </div>
                             </li>
@@ -262,7 +281,7 @@ const Order = () => {
                                     )}
                                     <Button 
                                         variant="contained" color="primary"
-                                        onClick={deliverHandler}
+                                        onClick={() => deliverHandler()}
                                         size="large" type="button"
                                     >
                                         Deliver Order

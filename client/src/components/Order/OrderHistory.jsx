@@ -82,7 +82,8 @@ const OrderHistory = () => {
                         </StyledTableCell>
                         <StyledTableCell align="right">
                             <Button 
-                            color='primary' variant='outlined' 
+                            color='primary' variant="contained" 
+                            disableFocusRipple disableRipple size="small"
                             onClick={() => history.push(`/order/${order._id}`)}>
                                 Details
                             </Button>

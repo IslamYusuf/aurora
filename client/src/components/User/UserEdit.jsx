@@ -55,7 +55,7 @@ const UserEdit = (props) => {
                 <Typography component="h1" variant="h5">
                     Edit User {`${firstName} ${lastName}`}
                     {loadingUpdate && <Loading/>}
-                    {errorUpdate && <Message variant="danger">{error}</Message>}
+                    {errorUpdate && <Message variant="danger">{errorUpdate}</Message>}
                 </Typography>
                 {loading && <Loading/>}
                 {error && <Message variant="danger">{error}</Message>}

@@ -6,7 +6,7 @@ import {
     ORDER_PAY_REQUEST,ORDER_PAY_SUCCESS,ORDER_LIST_REQUEST,
     ORDER_LIST_FAIL,ORDER_LIST_SUCCESS,ORDER_DELETE_REQUEST,
     ORDER_DELETE_SUCCESS,ORDER_DELETE_FAIL,ORDER_DELIVER_REQUEST,
-    ORDER_DELIVER_SUCCESS,ORDER_DELIVER_FAIL, ORDER_SUMMARY_REQUEST, ORDER_SUMMARY_SUCCESS, ORDER_SUMMARY_FAIL,
+    ORDER_DELIVER_SUCCESS,ORDER_DELIVER_FAIL, ORDER_SUMMARY_REQUEST, ORDER_SUMMARY_SUCCESS, ORDER_SUMMARY_FAIL, ORDER_UPDATE_REQUEST, ORDER_UPDATE_SUCCESS, ORDER_UPDATE_FAIL,
 } from "../constants/orderConstants";
 import {CART_EMPTY} from '../constants/cartConstants';
 
@@ -25,6 +25,29 @@ export const createOrder = (order) => async (dispatch, getState) => {
     } catch (error) {
         dispatch({
             type: ORDER_CREATE_FAIL,
+            payload: error.response && error.response.data.message
+                ? error.response.data.message.includes('Amount must convert to at least 50 cents')
+                ? 'Total Order amount MUST be at least Ksh55 to be payed using Stripe Card Payment. Please use Mpesa as your mode of payment for this order.'
+                : error.response.data.message
+                : error.message,
+        })
+    }
+}
+export const updateOrder = (orderId) => async (dispatch, getState) => {
+    dispatch({type: ORDER_UPDATE_REQUEST, payload: orderId});
+    
+    try {
+        const { user:{userInfo}} = getState();
+        const {data} = await Axios.put(`/api/orders/updatePaymentMethod/${orderId}`,{},{
+            headers: {
+                Authorization: `Bearer ${userInfo.token}`,
+            },
+        })
+        dispatch({type: ORDER_UPDATE_SUCCESS, payload: data.order})
+        //dispatch({type: CART_EMPTY})
+    } catch (error) {
+        dispatch({
+            type: ORDER_UPDATE_FAIL,
             payload: error.response && error.response.data.message
                 ? error.response.data.message.includes('Amount must convert to at least 50 cents')
                 ? 'Total Order amount MUST be at least Ksh55 to be payed using Stripe Card Payment. Please use Mpesa as your mode of payment for this order.'

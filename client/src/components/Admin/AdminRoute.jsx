@@ -11,7 +11,7 @@ const AdminRoute = ({component: Component, ...rest}) => {
     const {userInfo} = useSelector(state => state.user);
     const { users } = useSelector(state => state.userList);
 
-    useEffect(() =>{
+    /* useEffect(() =>{
         const validateAdmin = () =>{
             if(!users) dispatch(listUsers());
             else{
@@ -25,7 +25,7 @@ const AdminRoute = ({component: Component, ...rest}) => {
             }
         }
         validateAdmin();
-    }, [dispatch, userInfo, users, Component])
+    }, [dispatch, userInfo, users, Component]) */
 
     return (
         <Route 

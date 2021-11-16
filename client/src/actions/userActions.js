@@ -1,5 +1,8 @@
 import Axios from 'axios';
-import { CART_SAVE_ITEMS, CART_REMOVE_SHIPPING_ADDRESS, CART_ADD_ITEM } from '../constants/cartConstants';
+import { 
+  CART_SAVE_ITEMS, CART_REMOVE_SHIPPING_ADDRESS, CART_ADD_ITEM, 
+  CART_REMOVE_PAYMENT_METHOD 
+} from '../constants/cartConstants';
 import {
     USER_DETAILS_FAIL,USER_DETAILS_REQUEST,USER_DETAILS_SUCCESS,
     USER_SIGNIN_FAIL,USER_SIGNIN_REQUEST,USER_SIGNIN_SUCCESS,
@@ -64,6 +67,7 @@ export const signout = () => async (dispatch, getState) =>{
     const {data} = await Axios.post('api/users/signout', {email, cartItems});
     dispatch({type: CART_SAVE_ITEMS, payload:data})
     dispatch({type:CART_REMOVE_SHIPPING_ADDRESS})
+    dispatch({type:CART_REMOVE_PAYMENT_METHOD})
     dispatch({type: USER_SIGNOUT});
 }
 
@@ -100,8 +104,10 @@ export const updateUserProfile = (user) => async (dispatch, getState) => {
         dispatch({type: USER_SIGNIN_SUCCESS, payload: data});
         localStorage.setItem('userInfo', JSON.stringify(data));
     } catch (e) {
-        const message = e.response && e.response.data.message
-        ? e.response.data.message
+        const message =  e.response && e.response.data.message
+        ? e.response.data.message.includes('duplicate key')
+        ? 'An account already exisit for the email entered.' 
+        : e.response.data.message
         : e.message;
         dispatch({type: USER_UPDATE_PROFILE_FAIL, payload: message})
     }
@@ -115,11 +121,12 @@ export const updateUser = (user) => async (dispatch, getState) => {
       headers: { Authorization: `Bearer ${userInfo.token}` },
     });
     dispatch({ type: USER_UPDATE_SUCCESS, payload: data });
-  } catch (error) {
-    const message =
-      error.response && error.response.data.message
-        ? error.response.data.message
-        : error.message;
+  } catch (e) {
+    const message = e.response && e.response.data.message
+      ? e.response.data.message.includes('duplicate key')
+      ? 'An account already exisit for the email entered.' 
+      : e.response.data.message
+      : e.message;
     dispatch({ type: USER_UPDATE_FAIL, payload: message });
   }
 };

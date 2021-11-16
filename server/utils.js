@@ -88,8 +88,8 @@ export const initiateStk = async (req,res,next) =>{
           PartyB: process.env.SHORT_CODE,
           PhoneNumber: req.body.mpesaPhoneNumber,
           CallBackURL: `${ngrokUrl}/api/payment/mpesa/callback`,
-          AccountReference: 'Bin-Athman E-Store( islam Yusuf Project)',
-          TransactionDesc: 'Payment for goods purchased',
+          AccountReference: 'BinAthman', //max characters 12 
+          TransactionDesc: 'Test Payment1', //max characters 13
         });
         // send response to safaricom
         const {data} = await axios.post(process.env.STKPUSH_URL, body, {

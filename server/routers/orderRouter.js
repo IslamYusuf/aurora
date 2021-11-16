@@ -68,7 +68,7 @@ orderRouter.post(
         const user = await User.findById(req.user._id);
         if(!user.stripeInfo.hasStripeAccount){
           const customer = await stripe.customers.create({
-            description: 'My First Test Customer (created for API docs)',
+            description: 'BinAthman Test Customer.',
             name: `${user.firstName} ${user.lastName}`,
             email: user.email,
             address: {
@@ -94,8 +94,8 @@ orderRouter.post(
           await user.save();
         }
 
-        const paymentIntent = await stripe.paymentIntents.create({
-          amount: `${req.body.totalPrice * 100}`,
+        const paymentIntent = await stripe.paymentIntents.create({ //req.body.totalPrice * 100
+          amount: `${req.body.totalPrice}`.split('.').join(''), //parseInt((`${req.body.totalPrice}`.split('.').join('') + '00'))
           currency: 'kes',
           customer: user.stripeInfo.customerId,
           // Verify your integration in this guide by including this parameter
@@ -139,6 +139,97 @@ orderRouter.post(
         res.status(201).send({message: 'New Order Created', order: createdOrder,});
       }
     }
+}));
+
+//Update Payment method of an Order
+orderRouter.put(
+    '/updatePaymentMethod/:id',
+    isAuth,
+    expressAsyncHandler(async (req, res) =>{
+      console.log(`Starting the update process. orderID: ${req.params.id}`)
+      const order = await Order.findById(req.params.id);
+      if(order){
+        //console.log(`Order Found: ${order}. PaymentMethod: ${order.paymentMethod}`)
+        if(order.paymentMethod === 'Stripe'){
+          //Todo: Change payment method to Mpesa
+          order.paymentMethod = 'Mpesa';
+
+          const updatedOrder = await order.save();
+          res.status(201).send({message: 'Order Updated', order: updatedOrder});
+        }else{
+          console.log(`Working on stripe. UserID: ${order.user}`)
+          //Todo: Change payment to Stripe
+          const user = await User.findById(order.user);
+          if(user){
+            console.log(`User Found: ${user}`)
+            if(!user.stripeInfo.hasStripeAccount){
+              console.log(`User doesnt have a stripe account`)
+              const customer = await stripe.customers.create({
+                description: 'BinAthman Test Customer.',
+                name: `${user.firstName} ${user.lastName}`,
+                email: user.email,
+                address: {
+                  city: order.shippingAddress.city,
+                  country: order.shippingAddress.country,
+                  postal_code: order.shippingAddress.postalCode,
+                },
+                shipping:{
+                  address: {
+                    city: order.shippingAddress.city,
+                    country: order.shippingAddress.country,
+                    postal_code: order.shippingAddress.postalCode,
+                  },
+                  name: `${user.firstName} ${user.lastName}`, 
+                },
+              },
+              {
+                apiKey: process.env.STRIPE_SECRET_KEY,
+              });
+    
+              user.stripeInfo.hasStripeAccount = true;
+              user.stripeInfo.customerId = customer.id;
+              await user.save();
+              console.log(`User after creating a Stripe Account.`)
+            }
+            //Todo: If order doesn't have a payment intent create one.
+            //console.log(`Order has StripeInfo: ${!order.stripeInfo && order.stripeInfo.clientSecret}`)
+            console.log(`is there Client Secret: ${typeof order.stripeInfo.clientSecret === 'undefined'}`)
+            if(typeof order.stripeInfo.clientSecret === 'undefined'){ //order.stripeInfo && order.stripeInfo.clientSecret
+              console.log(`Inside creating a stripe Intent.`)
+              const paymentIntent = await stripe.paymentIntents.create({ //req.body.totalPrice * 100
+                amount: `${order.totalPrice}`.split('.').join(''), //parseInt((`${req.body.totalPrice}`.split('.').join('') + '00'))
+                currency: 'kes',
+                customer: user.stripeInfo.customerId,
+                // Verify your integration in this guide by including this parameter
+                metadata: {integration_check: 'accept_a_payment'},
+              },
+              {
+                apiKey: process.env.STRIPE_SECRET_KEY,
+              });
+
+              order.stripeInfo.clientSecret = paymentIntent.client_secret;
+              order.paymentMethod = 'Stripe';
+      
+              const updatedOrder = await order.save();
+              console.log(`Order after creating stripeIntent: ${updatedOrder}`)
+              res.status(201).send({message: 'Order Updated', order: updatedOrder});
+
+            } else{
+              //Todo: change payment method to stripe if their is clientSecret in stripeInfo
+              order.paymentMethod = 'Stripe';
+      
+              const updatedOrder = await order.save();
+              res.status(201).send({message: 'Order Updated', order: updatedOrder});
+
+            }
+          } else{
+            // Todo: Send error response to indicate user is not found 
+            res.status(404).send({message: 'The user account/owner of the Order not Found.'})  
+          }  
+        }
+      } else {
+          res.status(404).send({message: 'Order not Found.'})
+      }      
 }));
 
 orderRouter.get('/:id', isAuth, expressAsyncHandler(async (req, res) => {

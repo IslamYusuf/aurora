@@ -7,7 +7,7 @@ import {
     ORDER_DELETE_SUCCESS,ORDER_DELETE_FAIL,ORDER_DELIVER_REQUEST,
     ORDER_DELETE_RESET,ORDER_DELIVER_SUCCESS,ORDER_DELIVER_FAIL,
     ORDER_DELIVER_RESET,ORDER_SUMMARY_REQUEST,ORDER_SUMMARY_SUCCESS,
-    ORDER_SUMMARY_FAIL, ORDER_PAY_IN_PROGRESS,
+    ORDER_SUMMARY_FAIL, ORDER_PAY_IN_PROGRESS, ORDER_UPDATE_REQUEST, ORDER_UPDATE_SUCCESS, ORDER_UPDATE_FAIL,
 } from "../constants/orderConstants";
 import { CONFIRM_MPESA_PAYMENT } from "../constants/paymentConstants";
 
@@ -28,11 +28,16 @@ export const order = (state={}, action) => {
 export const orderDetails = (state={loading:true, order:{}}, action) => {
     switch(action.type){
         case ORDER_DETAILS_REQUEST:
+        case ORDER_UPDATE_REQUEST:
             return {loading: true}
         case ORDER_DETAILS_SUCCESS:
-            return {loading: false, order: action.payload}
+          return {loading:false, order: action.payload}
+        case ORDER_UPDATE_SUCCESS:
+            return {...state, order: action.payload}
         case ORDER_DETAILS_FAIL:
-            return {loading:false, error: action.payload}
+          return {loading:false, error: action.payload}
+        case ORDER_UPDATE_FAIL:
+            return {...state, paymentUpdateError: action.payload}
         default:
             return state;
     }
