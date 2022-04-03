@@ -13,35 +13,32 @@ dotenv.config();
 
 const app = express();
 app.use(express.json())
-app.use(express.urlencoded({extended: true}))
+app.use(express.urlencoded({ extended: true }))
 
 mongoose.connect(process.env.MONGODB_URL || 'mongodb://localhost/aurora', {
-    useNewUrlParser: true, 
+    useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
 }).catch(err => console.log(err))
 
 const port = process.env.PORT || 5000;
 
+const __dirname = path.resolve();
+app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 app.use('/api/users', userRouter);
 app.use('/api/products', productRouter);
 app.use('/api/orders', orderRouter);
 app.use('/api/uploads', uploadRouter);
 app.use('/api/payment', paymentRouter)
-app.get('/api/config/maptiler', (req, res) => {
-    res.send(process.env.MAPTILER_URL || '');
-});
-app.get('/', (req, res) =>{
+
+app.get('/', (req, res) => {
     res.send('Server is running')
 })
 
-const __dirname = path.resolve();
-app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
-
-app.use((err, req, res, next) =>{
-    res.status(500).send({message: err.message});
+app.use((err, req, res, next) => {
+    res.status(500).send({ message: err.message });
 })
 
-app.listen(port, () =>{
+app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
 })

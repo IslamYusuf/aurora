@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
 import {
     Button, Divider, FormControl, FormLabel,
-    RadioGroup,FormControlLabel,Radio,
+    RadioGroup, FormControlLabel, Radio,
 } from '@material-ui/core';
 
 import { createOrder } from '../../actions/orderActions';
@@ -17,29 +17,29 @@ const PlaceOrder = () => {
     const history = useHistory();
     const dispatch = useDispatch();
     const cart = useSelector(state => state.cart)
-    const {userInfo} = useSelector(state => state.user)
-    const {shippingAddress:{fullName, address, city, postalCode, country}, paymentMethod, cartItems} = cart;
+    const { userInfo } = useSelector(state => state.user)
+    const { shippingAddress: { fullName, address, city, postalCode, country }, paymentMethod, cartItems } = cart;
 
-    if(!paymentMethod){
+    if (!paymentMethod) {
         history.push('/shipping');
     }
 
-    const {loading, success, error, order} = useSelector(state => state.order)
-    
+    const { loading, success, error, order } = useSelector(state => state.order)
+
     const toPrice = (num) => Number(num.toFixed(2));
     cart.itemsPrice = toPrice(cartItems.reduce((a, c) => a + c.qty * c.price, 0));
     cart.shippingPrice = cart.itemsPrice < 100 ? toPrice(1) : toPrice(0)
     cart.taxPrice = toPrice(0.15 * cart.itemsPrice);
     cart.totalPrice = cart.itemsPrice + cart.shippingPrice + cart.taxPrice;
 
-    const placeOrderHandler = () =>{
-        dispatch(createOrder({...cart, orderItems: cartItems}))
+    const placeOrderHandler = () => {
+        dispatch(createOrder({ ...cart, orderItems: cartItems }))
     }
 
     useEffect(() => {
-        if(success){
+        if (success) {
             history.push(`/order/${order._id}`);
-            dispatch({type: ORDER_CREATE_RESET});
+            dispatch({ type: ORDER_CREATE_RESET });
         }
     }, [dispatch, success, order, history])
 
@@ -73,25 +73,22 @@ const PlaceOrder = () => {
                             <div className='card card-body'>
                                 <h2>Order Items</h2>
                                 <ul>
-                                    {
-                                        cartItems.map((item) => (
-                                            <li key={item.product}>
-                                                <div className='row' >
-                                                    <div>
-                                                        <img 
-                                                        src={item.image}
-                                                        alt={item.name}
+                                    {cartItems.map((item) => (
+                                        <li key={item.product}>
+                                            <div className='row' >
+                                                <div>
+                                                    <img src={item.image} alt={item.name}
                                                         className='small' />
-                                                    </div>
-                                                    <div className='min-30' >
-                                                        <Link to={`/product/${item.product}`} >{item.name}</Link>
-                                                    </div>
-                                
-                                                    <div>{item.qty} x Ksh{item.price} = Ksh{item.qty * item.price}</div>
-                                                    
                                                 </div>
-                                            </li>
-                                        ))
+                                                <div className='min-30' >
+                                                    <Link to={`/product/${item.product}`} >{item.name}</Link>
+                                                </div>
+
+                                                <div>{item.qty} x Ksh{item.price} = Ksh{item.qty * item.price}</div>
+
+                                            </div>
+                                        </li>
+                                    ))
                                     }
                                 </ul>
                             </div>
