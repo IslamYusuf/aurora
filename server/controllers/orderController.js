@@ -157,7 +157,6 @@ export const updatePaymentMethod = async (req, res) => {
     console.log(`Starting the update process. orderID: ${req.params.id}`)
     const order = await Order.findById(req.params.id);
     if (order) {
-        //console.log(`Order Found: ${order}. PaymentMethod: ${order.paymentMethod}`)
         if (order.paymentMethod === 'Stripe') {
             //Change payment method to Mpesa
             order.paymentMethod = 'Mpesa';

@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {useHistory, useLocation, Link } from 'react-router-dom';
+import { useHistory, useLocation, Link } from 'react-router-dom';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import {
-    Avatar, Button, TextField, 
-    Grid, Box, Typography, Container,
+  Avatar, Button, TextField,
+  Grid, Box, Typography, Container,
 } from '@material-ui/core';
 
 import { signin } from '../../actions/userActions';
@@ -18,7 +18,7 @@ function Copyright() {
     <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright © '}
       <Link to='/'>
-      BinAthman Supermarket
+        Aurora
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -27,28 +27,28 @@ function Copyright() {
 }
 
 export default function SignIn() {
-    const classes = useStyles();
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const {search} = useLocation();
-    const history = useHistory();
+  const classes = useStyles();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const { search } = useLocation();
+  const history = useHistory();
 
-    const redirect = search ? search.split('=')[1] : '/';
-    const {userInfo, loading, error} = useSelector(state => state.user);
+  const redirect = search ? search.split('=')[1] : '/';
+  const { userInfo, loading, error } = useSelector(state => state.user);
 
 
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-    const submitHandler = (e) => {
-        e.preventDefault();
-        dispatch(signin(email, password));
+  const submitHandler = (e) => {
+    e.preventDefault();
+    dispatch(signin(email, password));
+  }
+
+  useEffect(() => {
+    if (userInfo) {
+      history.push(redirect);
     }
-
-    useEffect(() =>{
-        if(userInfo){
-            history.push(redirect);
-        }
-}, [history, redirect, userInfo]);
+  }, [history, redirect, userInfo]);
 
   return (
     <Container component="main" maxWidth="xs">
@@ -59,7 +59,7 @@ export default function SignIn() {
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
-        {loading && <Loading/>}
+        {loading && <Loading />}
         {error && <Message variant="danger">{error}</Message>}
         <form className={classes.form} onSubmit={submitHandler}>
           <TextField
@@ -72,7 +72,7 @@ export default function SignIn() {
             name="email"
             autoComplete="email"
             autoFocus
-            inputProps={{maxLength: 40}}
+            inputProps={{ maxLength: 40 }}
             onChange={(e) => setEmail(e.target.value)}
           />
           <TextField
@@ -85,7 +85,7 @@ export default function SignIn() {
             type="password"
             id="password"
             autoComplete="current-password"
-            inputProps={{maxLength: 35}}
+            inputProps={{ maxLength: 35 }}
             onChange={(e) => setPassword(e.target.value)}
           />
           <Button

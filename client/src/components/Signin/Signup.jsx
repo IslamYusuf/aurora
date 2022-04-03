@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {useHistory, useLocation, Link } from 'react-router-dom';
+import { useHistory, useLocation, Link } from 'react-router-dom';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import {
-    Avatar, Button, TextField, 
-    Grid, Box, Typography, Container,
+  Avatar, Button, TextField,
+  Grid, Box, Typography, Container,
 } from '@material-ui/core';
 
 import { signup } from '../../actions/userActions';
@@ -18,7 +18,7 @@ function Copyright() {
     <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright © '}
       <Link to="/">
-        BinAthman Supermarket
+        Aurora
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -34,28 +34,28 @@ export default function SignUp() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const {search} = useLocation();
+  const { search } = useLocation();
   const history = useHistory();
 
   const redirect = search ? search.split('=')[1] : '/';
-  const {userInfo, loading, error} = useSelector(state => state.user);
+  const { userInfo, loading, error } = useSelector(state => state.user);
 
 
   const dispatch = useDispatch();
 
   const submitHandler = (e) => {
-      e.preventDefault();
-      if(password !== confirmPassword){
-          alert("Password and confirm password don't match");
-      } else {
-          dispatch(signup(firstName, lastName, email, password));        
-      }
+    e.preventDefault();
+    if (password !== confirmPassword) {
+      alert("Password and confirm password don't match");
+    } else {
+      dispatch(signup(firstName, lastName, email, password));
+    }
   }
 
-  useEffect(() =>{
-      if(userInfo){
-          history.push(redirect);
-      }
+  useEffect(() => {
+    if (userInfo) {
+      history.push(redirect);
+    }
   }, [history, redirect, userInfo]);
 
   return (
@@ -67,7 +67,7 @@ export default function SignUp() {
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
-        {loading && <Loading/>}
+        {loading && <Loading />}
         {error && <Message variant="danger">{error}</Message>}
         <form className={classes.form} onSubmit={submitHandler}>
           <Grid container spacing={2}>
@@ -82,7 +82,7 @@ export default function SignUp() {
                 label="First Name"
                 autoFocus
                 margin="normal"
-                inputProps={{maxLength: 20}}
+                inputProps={{ maxLength: 20 }}
                 onChange={(e) => setFirstName(e.target.value)}
               />
             </Grid>
@@ -96,7 +96,7 @@ export default function SignUp() {
                 name="lastName"
                 autoComplete="lname"
                 margin="normal"
-                inputProps={{maxLength: 20}}
+                inputProps={{ maxLength: 20 }}
                 onChange={(e) => setLastName(e.target.value)}
               />
             </Grid>
@@ -110,7 +110,7 @@ export default function SignUp() {
                 label="Email Address"
                 name="email"
                 autoComplete="email"
-                inputProps={{maxLength: 40}}
+                inputProps={{ maxLength: 40 }}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </Grid>
@@ -127,7 +127,7 @@ export default function SignUp() {
                 title="Password must be at least 6 characters long and
                 should contain a lowercase letter, uppercase and 
                 a digit."
-                inputProps={{maxLength: 35}}
+                inputProps={{ maxLength: 35 }}
                 onChange={(e) => setPassword(e.target.value)}
               />
             </Grid>
@@ -144,11 +144,11 @@ export default function SignUp() {
                 title="Password must be at least 6 characters long and
                 should contain a lowercase letter, uppercase and 
                 a digit."
-                inputProps={{maxLength: 35}}
+                inputProps={{ maxLength: 35 }}
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
               <font face="Arial" size="-10" color="#a4a4a4"><i>(Password must be at least 6 characters long and
-                should contain a lowercase letter, uppercase and 
+                should contain a lowercase letter, uppercase and
                 a digit.)</i>
               </font>
             </Grid>
