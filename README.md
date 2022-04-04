@@ -1,6 +1,6 @@
 # Aurora ECommerce Website
 
-An e-commerce application with product search, shopping cart, order and user management, payment processing with Stripe and Mpesa,  - developed using React, Redux, Node, Express, Ngrok, Mongoose and MongoDB.
+An e-commerce application with product search, shopping cart, order and user management, payment processing with Stripe and Mpesa,  - developed using React, Redux, Material-UI, Node, Express, Ngrok, Mongoose and MongoDB.
 
 ![aurora](/template/images/Aurora.png)
 
