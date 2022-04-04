@@ -42,7 +42,7 @@ $ npm start
 ```
 7. Seed Users and Products
 - Run this on browser: http://localhost:5000/api/users/seed
-- It returns a list of users which have been addded in the database.(The users are hard coded in the data.js file in the server directory)
+  - It returns a list of users which have been addded in the database.(The users are hard coded in the data.js file in the server directory)
 - Run this on browser: http://localhost:5000/api/products/seed
-- It creates 20 sample products (The products are also hard coded in the data.js file in the server directory)
+  - It creates 20 sample products (The products are also hard coded in the data.js file in the server directory)
 8. Open [localhost:3000](http://localhost:3000/) in the browser to run the Application
