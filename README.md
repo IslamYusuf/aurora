@@ -20,11 +20,11 @@ NOTE: this project is divided into two parts, the frontend code is in the client
 3. Add a .env file in the client directory and then add the following environment variable,
    - REACT_APP_STRIPE_PUBLIC_KEY='You should add your stripe public key'
 4. Also Add .env file to the server directory to hold the following enviroment variables,
-   - OAUTH_TOKEN_URL='https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
-   - OAUTH_TOKEN='Add your Basic Authorization token which is obtained from your Safaricom Developer portal in the Authorization section'[here](https://developer.safaricom.co.ke/APIs/Authorization)
+   - OAUTH_TOKEN_URL='Add the URL of Mpesa Authorization Endpoint'
+   - OAUTH_TOKEN='Add your Basic Authorization token of your Mpesa app which is obtained from your Safaricom Developer portal in the Authorization section'[here] (https://developer.safaricom.co.ke/APIs/Authorization)
    - SHORT_CODE='Business Short code of the app you created obtained from the MpesaExpressSimulate APIs section'
    - PASS_KEY='This key is also obtained from the MpesaExpressSimulate APIs section of the App you created for this project'
-   - STKPUSH_URL='https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest'
+   - STKPUSH_URL='Add the URL of the Mpesa Express Simulate Endpoint'
    - NGROK_AUTH_TOKEN='Add your ngrok auth token'
    - STRIPE_SECRET_KEY='Add your stripe secret key'
 5. Run Backend.
